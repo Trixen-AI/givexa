@@ -1,0 +1,35 @@
+name: Givexa mainnet monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: givexa-mainnet-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ROBINHOOD_RPC_URL: ${{ secrets.ROBINHOOD_RPC_URL }}
+      GIVEXA_EXPECTED_FEE_BPS: '50'
+      GIVEXA_ALLOW_CREATION_PAUSED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify Robinhood Chain production posture
+        run: pnpm monitor:mainnet -- --json
+

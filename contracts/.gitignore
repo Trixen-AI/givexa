@@ -1,0 +1,13 @@
+# Secrets
+alchemy.env
+.env
+.env.*
+!.env.example
+
+# Foundry generated data
+cache/
+out/
+broadcast/
+
+# Deployment records are committed only after review
+deployments/*.local.json

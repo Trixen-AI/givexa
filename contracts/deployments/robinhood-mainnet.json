@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "project": "Givexa",
+  "network": {
+    "name": "Robinhood Chain Mainnet",
+    "chainId": 4663,
+    "explorer": "https://robinhoodchain.blockscout.com"
+  },
+  "deployment": {
+    "timestampUtc": "2026-08-30T18:30:37.523Z",
+    "sourceVerificationCompletedAtUtc": "2026-08-30T19:03:43.400Z",
+    "deployer": "0x87f2ee703BB7e1E8C57D2C5B2ad1a0F8c8E13173",
+    "blockRange": {
+      "first": 50224070,
+      "last": 50224172
+    },
+    "toolchain": {
+      "forge": "1.7.1",
+      "solc": "0.8.36",
+      "evmVersion": "cancun",
+      "optimizerRuns": 20000,
+      "viaIR": true
+    }
+  },
+  "governance": {
+    "safe": "0x9E4432C98321dAB22bF78cEd55800F0F5B893802",
+    "safeThreshold": 2,
+    "safeOwnerCount": 3,
+    "treasury": "0x9E4432C98321dAB22bF78cEd55800F0F5B893802",
+    "timelockDelaySeconds": 172800
+  },
+  "assetManifest": {
+    "path": "deployments/robinhood-mainnet.assets.json",
+    "sha256": "0x7d58d519a1f52aa96d5031bb4cbbafed57cace8740715633c319afe2cf8c8ea9",
+    "registeredAssetCount": 10
+  },
+  "contracts": {
+    "assetRegistry": {
+      "address": "0x3DbcD81aC7cAE53B11be7490fEc2ADf71EBDaceA",
+      "deploymentTransaction": "0x5e3374ea7800a830115b990e72fc10b5e382f6afb6ee0079fca57e3838f7059f",
+      "owner": "0x152Cd038Aee65F2Ca4F362b8E9069477C8AAEC03",
+      "sourceVerification": "blockscout-exact-match",
+      "explorerUrl": "https://robinhoodchain.blockscout.com/address/0x3DbcD81aC7cAE53B11be7490fEc2ADf71EBDaceA?tab=contract"
+    },
+    "feeController": {
+      "address": "0x06b04449166FF138FEdcdc894636c8986444aD55",
+      "deploymentTransaction": "0xf308a9ffd0e9279730cfebc9b0b62b9def1a3996b7d8f0ec12f028c9a1f25509",
+      "owner": "0x152Cd038Aee65F2Ca4F362b8E9069477C8AAEC03",
+      "initialFeeBps": 50,
+      "sourceVerification": "blockscout-exact-match",
+      "explorerUrl": "https://robinhoodchain.blockscout.com/address/0x06b04449166FF138FEdcdc894636c8986444aD55?tab=contract"
+    },
+    "giftVault": {
+      "address": "0x82d477c00e1D8DC784aE87a71Ffa2C56Ad2626E9",
+      "deploymentTransaction": "0x8aff0cbf0256b0d2e34b5a6b862680f28b84d3916f384d5c398ae30769368865",
+      "owner": "0x152Cd038Aee65F2Ca4F362b8E9069477C8AAEC03",
+      "guardian": "0x9E4432C98321dAB22bF78cEd55800F0F5B893802",
+      "sourceVerification": "blockscout-exact-match",
+      "explorerUrl": "https://robinhoodchain.blockscout.com/address/0x82d477c00e1D8DC784aE87a71Ffa2C56Ad2626E9?tab=contract"
+    },
+    "timelock": {
+      "address": "0x152Cd038Aee65F2Ca4F362b8E9069477C8AAEC03",
+      "deploymentTransaction": "0xdb993ea23d62c2523655c98b073a20c9265ada75718c5d4d4329d1f1601f302a",
+      "proposer": "0x9E4432C98321dAB22bF78cEd55800F0F5B893802",
+      "canceller": "0x9E4432C98321dAB22bF78cEd55800F0F5B893802",
+      "executor": "0x0000000000000000000000000000000000000000",
+      "sourceVerification": "blockscout-exact-match",
+      "explorerUrl": "https://robinhoodchain.blockscout.com/address/0x152Cd038Aee65F2Ca4F362b8E9069477C8AAEC03?tab=contract"
+    }
+  },
+  "configurationTransactions": {
+    "registerAssets": "0xba226d095b0f91ee905294795727eabef6039f5e4e79c32beaa67b1e8286fb64",
+    "transferRegistryOwnership": "0x5e17f04173a3bd53b47ba7e6ad30b2f8ce612dd0b2e66566abf5234cd9738bf3",
+    "transferFeeControllerOwnership": "0x6f9a3f78c0e60a690a4cf15eeaab0abad14588253c3cdd5105229009db2b02d0",
+    "transferGiftVaultOwnership": "0xb5c0e9cbac01f00db51c40df949ea74ac799c2fdff74d02b93979d525ec88feb"
+  }
+}

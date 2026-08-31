@@ -1,0 +1,16 @@
+Givexa asset logo sources / references
+
+No AI image generation was used for these final logo files.
+
+NVDA  - Internet logo image search; NVIDIA brand mark (normalized/cropped to icon).
+AAPL  - Internet logo image search; Apple corporate mark.
+TSLA  - Internet logo image search; Tesla corporate T mark.
+AMZN  - Internet logo image search; Amazon wordmark/smile.
+MSFT  - dev-details/gilbarbara-logos public GitHub logo repository, microsoft-icon.svg.
+GOOGL - dev-details/gilbarbara-logos public GitHub logo repository, google-icon.svg.
+META  - simple-icons/simple-icons public GitHub logo repository, meta.svg; rendered in Meta brand blue.
+SPY   - Branding reference: CompaniesLogo SPDR S&P 500 ETF Trust + State Street product identity; standardized transparent product lockup.
+QQQ   - Branding reference: CompaniesLogo Invesco QQQ product mark; standardized transparent triple-Q lockup.
+GLD   - Branding reference: State Street / SPDR Gold Shares official product identity; standardized transparent product lockup.
+
+All output images: 500x500 WebP, transparent canvas.
