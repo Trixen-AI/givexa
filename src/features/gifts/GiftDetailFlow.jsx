@@ -23,7 +23,7 @@ import {
 import { giftVaultAbi } from '../../web3/abis.js'
 import { getTransactionErrorMessage } from '../../web3/errors.js'
 import { formatDate, formatTokenAmount, shortAddress } from '../../web3/format.js'
-import { robinhoodChain } from '../../web3/network.js'
+import { isWalletNetwork, WALLET_NAMESPACE, walletNetwork } from '../../web3/network.js'
 
 const DISPLAY_STATUS = ['Nonexistent', 'Scheduled', 'Active', 'Expired', 'Claimed', 'Cancelled', 'Returned']
 
@@ -96,7 +96,7 @@ function ConfirmationDialog({ action, assetSymbol, amount, onCancel, onConfirm, 
         <p id="gift-dialog-copy">
           {isCancel
             ? `${amount} ${assetSymbol} will return to the sender. The private claim link will stop working permanently.`
-            : `${amount} ${assetSymbol} will return to the original sender. The connected wallet only pays gas to trigger recovery.`}
+            : `${amount} ${assetSymbol} will return to the original sender. The connected wallet only pays the network fee to trigger recovery.`}
         </p>
         <div className="gift-dialog__actions">
           <button ref={cancelRef} className="app-secondary-button" type="button" onClick={onCancel} disabled={busy}>Keep gift</button>
@@ -118,7 +118,7 @@ function ConfirmationDialog({ action, assetSymbol, amount, onCancel, onConfirm, 
 export function GiftDetailFlow({ routeGiftId }) {
   const giftId = useMemo(() => (/^\d+$/u.test(routeGiftId || '') ? BigInt(routeGiftId) : null), [routeGiftId])
   const { open } = useAppKit()
-  const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' })
+  const { address, isConnected } = useAppKitAccount({ namespace: WALLET_NAMESPACE })
   const { chainId, switchNetwork } = useAppKitNetwork()
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID })
   const { writeContractAsync } = useWriteContract()
@@ -165,7 +165,7 @@ export function GiftDetailFlow({ routeGiftId }) {
   }
 
   if (giftLoading || statusLoading) {
-    return <div className="claim-loading app-card" role="status"><span className="app-spinner" /><strong>Reading Gift Vault #{routeGiftId}</strong><p>Checking the verified contract on Robinhood Chain.</p></div>
+    return <div className="claim-loading app-card" role="status"><span className="app-spinner" /><strong>Reading Gift Vault #{routeGiftId}</strong><p>Checking the verified Gift Vault contract.</p></div>
   }
 
   if (giftError || statusError || !giftResult) {
@@ -185,7 +185,7 @@ export function GiftDetailFlow({ routeGiftId }) {
   const [statusLabel, statusCopy, statusTone] = STATUS_CONTENT[status] || ['Unavailable', 'The current gift state is unavailable.', 'expired']
   const asset = ASSET_BY_ADDRESS.get(giftRecord.asset.toLowerCase())
   const amount = formatTokenAmount(giftRecord.principal)
-  const onCorrectNetwork = Number(chainId) === ROBINHOOD_CHAIN_ID
+  const onCorrectNetwork = isWalletNetwork(chainId)
   const isSender = Boolean(address && address.toLowerCase() === giftRecord.sender.toLowerCase())
   const canCancel = isSender && ['Scheduled', 'Active', 'Expired'].includes(status)
   const canRecover = status === 'Expired'
@@ -194,11 +194,11 @@ export function GiftDetailFlow({ routeGiftId }) {
   async function requestAction(action) {
     setTransaction({ status: 'idle', message: '', hash: '' })
     if (!isConnected) {
-      await open({ view: 'Connect', namespace: 'eip155' })
+      await open({ view: 'Connect', namespace: WALLET_NAMESPACE })
       return
     }
     if (!onCorrectNetwork) {
-      await switchNetwork(robinhoodChain)
+      await switchNetwork(walletNetwork)
       return
     }
     setDialogAction(action)
@@ -219,7 +219,7 @@ export function GiftDetailFlow({ routeGiftId }) {
       })
       const hash = await writeContractAsync(request)
       setDialogAction('')
-      setTransaction({ status: 'pending', message: 'Transaction submitted. Waiting for Robinhood Chain confirmation.', hash })
+      setTransaction({ status: 'pending', message: 'Transaction submitted. Waiting for onchain confirmation.', hash })
       const receipt = await publicClient.waitForTransactionReceipt({ hash })
       if (receipt.status !== 'success') throw new Error('Gift lifecycle transaction reverted.')
       await Promise.all([refetchGift(), refetchStatus()])

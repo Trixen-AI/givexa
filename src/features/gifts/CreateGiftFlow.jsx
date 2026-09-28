@@ -5,14 +5,14 @@ import {
   ArrowRight, CalendarBlank, Check, CheckCircle, Copy, Gift, Info, LockKey,
   ShieldCheck, Wallet,
 } from '@phosphor-icons/react'
-import { parseEventLogs, parseUnits, stringToHex, zeroHash } from 'viem'
+import { isAddress, parseEventLogs, parseUnits, stringToHex, zeroHash } from 'viem'
 import { usePublicClient, useReadContract, useWriteContract } from 'wagmi'
 import { CONTRACTS, DEFAULT_EXPIRY_DAYS, ROBINHOOD_CHAIN_ID, SUPPORTED_ASSETS, TOKEN_DECIMALS } from '../../config/deployment.js'
 import { assetRegistryAbi, erc20Abi, feeControllerAbi, giftVaultAbi } from '../../web3/abis.js'
 import { getTransactionErrorMessage } from '../../web3/errors.js'
 import { formatTokenAmount } from '../../web3/format.js'
 import { buildClaimUrl, generateClaimCode, generateSecret } from '../../web3/giftLink.js'
-import { robinhoodChain } from '../../web3/network.js'
+import { isWalletNetwork, WALLET_NAMESPACE, WALLET_NETWORK_NAME, walletNetwork } from '../../web3/network.js'
 import { TransactionStatus } from '../../components/app/TransactionStatus.jsx'
 
 const EXPIRY_OPTIONS = [7, 14, 30, 90]
@@ -112,10 +112,12 @@ function AssetPicker({ selectedAddress, onChange }) {
 export function CreateGiftFlow() {
   const reduceMotion = useReducedMotion()
   const { open } = useAppKit()
-  const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' })
+  const { address, isConnected } = useAppKitAccount({ namespace: WALLET_NAMESPACE })
   const { chainId, switchNetwork } = useAppKitNetwork()
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID })
   const { writeContractAsync } = useWriteContract()
+  // Token balances are only readable for an account the Gift Vault contracts understand.
+  const contractAccount = address && isAddress(address) ? address : undefined
 
   const [assetAddress, setAssetAddress] = useState(SUPPORTED_ASSETS[0].address)
   const [amount, setAmount] = useState('')
@@ -132,7 +134,7 @@ export function CreateGiftFlow() {
 
   const principal = useMemo(() => parsePrincipal(amount), [amount])
   const selectedAsset = SUPPORTED_ASSETS.find((asset) => asset.address === assetAddress)
-  const onCorrectNetwork = Number(chainId) === ROBINHOOD_CHAIN_ID
+  const onCorrectNetwork = isWalletNetwork(chainId)
 
   const { data: quotedFee = 0n, isLoading: feeLoading, error: feeError } = useReadContract({
     address: CONTRACTS.feeController,
@@ -165,17 +167,17 @@ export function CreateGiftFlow() {
     address: assetAddress,
     abi: erc20Abi,
     functionName: 'balanceOf',
-    args: address ? [address] : undefined,
+    args: contractAccount ? [contractAccount] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(address) },
+    query: { enabled: Boolean(contractAccount) },
   })
   const { data: allowance = 0n } = useReadContract({
     address: assetAddress,
     abi: erc20Abi,
     functionName: 'allowance',
-    args: address ? [address, CONTRACTS.giftVault] : undefined,
+    args: contractAccount ? [contractAccount, CONTRACTS.giftVault] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(address) },
+    query: { enabled: Boolean(contractAccount) },
   })
 
   const totalRequired = principal ? principal + quotedFee : 0n
@@ -208,7 +210,7 @@ export function CreateGiftFlow() {
   function validateForm() {
     if (!principal) return 'Enter a valid amount with no more than 18 decimal places.'
     if (feeLoading) return 'Wait for the live creation fee to finish loading.'
-    if (feeError || feeRateError || registryError || pauseError || balanceError) return 'Live contract state could not be verified. Check the Robinhood Chain RPC connection and try again.'
+    if (feeError || feeRateError || registryError || pauseError || balanceError) return 'Live contract state could not be verified. Check the network connection and try again.'
     if (supported === false) return 'This asset is currently disabled in the Givexa registry.'
     if (creationPaused) return 'New gifts are temporarily paused. Existing gifts remain safe.'
     if (senderName.length > 60) return 'Sender name must be 60 characters or fewer.'
@@ -241,7 +243,7 @@ export function CreateGiftFlow() {
       args: [CONTRACTS.giftVault, total],
     })
     const approvalHash = await writeContractAsync(request)
-    setTransaction({ status: 'pending', message: 'Token approval submitted. Waiting for Robinhood Chain confirmation.', hash: approvalHash })
+    setTransaction({ status: 'pending', message: 'Token approval submitted. Waiting for onchain confirmation.', hash: approvalHash })
     const receipt = await publicClient.waitForTransactionReceipt({ hash: approvalHash })
     if (receipt.status !== 'success') throw new Error('Token approval reverted.')
   }
@@ -250,11 +252,11 @@ export function CreateGiftFlow() {
     event.preventDefault()
     setFormError('')
     if (!isConnected) {
-      open({ view: 'Connect', namespace: 'eip155' })
+      open({ view: 'Connect', namespace: WALLET_NAMESPACE })
       return
     }
     if (!onCorrectNetwork) {
-      await switchNetwork(robinhoodChain)
+      await switchNetwork(walletNetwork)
       return
     }
     const validationError = validateForm()
@@ -264,7 +266,7 @@ export function CreateGiftFlow() {
     }
 
     try {
-      if (!publicClient) throw new Error('Robinhood Chain RPC is unavailable.')
+      if (!publicClient) throw new Error('The network RPC is unavailable.')
       const secret = generateSecret()
       const claimCode = protectedGift ? generateClaimCode() : ''
       const unlockAt = getUnlockTimestamp(mode, scheduledAt)
@@ -353,7 +355,7 @@ export function CreateGiftFlow() {
         <p>{createdGift.amount} {createdGift.symbol} is secured in the Givexa Gift Vault. The private link contains the claim secret, so share it only with the intended recipient.</p>
         <div className="claim-link-box"><span>{createdGift.claimUrl}</span><button type="button" onClick={copyLink}>{copied ? <Check /> : <Copy />} {copied ? 'Copied' : 'Copy link'}</button></div>
         {createdGift.claimCode && <div className="claim-code-once"><LockKey size={24} /><div><small>Share separately. Shown once.</small><strong>{createdGift.claimCode}</strong></div></div>}
-        <TransactionStatus status="success" message="The funding transaction is confirmed on Robinhood Chain." hash={createdGift.hash} />
+        <TransactionStatus status="success" message="The funding transaction is confirmed onchain." hash={createdGift.hash} />
         <div className="gift-success__actions"><a className="app-primary-button" href={createdGift.claimUrl}>Preview gift</a><button className="app-secondary-button" type="button" onClick={() => { clearPendingGift(); window.location.reload() }}>Create another</button></div>
       </Motion.section>
     )
@@ -385,7 +387,7 @@ export function CreateGiftFlow() {
         {formError && <p className="form-error" role="alert">{formError}</p>}
         <TransactionStatus status={transaction.status} message={transaction.message} hash={transaction.hash} />
         <button className="app-primary-button app-primary-button--full" type="submit" disabled={busy || creationPaused || supported === false}>
-          {!isConnected ? 'Connect wallet' : !onCorrectNetwork ? 'Switch to Robinhood Chain' : busy ? 'Transaction in progress' : needsApproval ? 'Approve and create gift' : 'Create Asset Gift'}
+          {!isConnected ? 'Connect wallet' : !onCorrectNetwork ? `Switch to ${WALLET_NETWORK_NAME}` : busy ? 'Transaction in progress' : needsApproval ? 'Approve and create gift' : 'Create Asset Gift'}
           {!busy && <ArrowRight size={19} weight="bold" />}
         </button>
         <div className="gift-summary__trust"><Check size={15} /> Exact-match verified contracts <Check size={15} /> Sender-controlled recovery</div>

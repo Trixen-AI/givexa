@@ -99,7 +99,7 @@ function ExplorerLink({ address, children, className = '' }) {
       href={`${BLOCK_EXPLORER_URL}/address/${address}`}
       target="_blank"
       rel="noreferrer"
-      aria-label={`${children}. View on Blockscout`}
+      aria-label={`${children}. View in explorer`}
     >
       {children}<ArrowSquareOut size={17} aria-hidden="true" />
     </a>
@@ -157,7 +157,7 @@ function LoadingState() {
           <div className="mt-5 h-4 w-full rounded bg-slate-100" />
         </div>
       ))}
-      <span className="sr-only">Reading governance contracts from Robinhood Chain.</span>
+      <span className="sr-only">Reading governance contracts onchain.</span>
     </div>
   )
 }
@@ -210,12 +210,12 @@ export function GovernancePage() {
               Protocol controls, visible to everyone.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              This page reads the deployed Safe, Timelock, fee settings, ownership, and asset allowlist directly from Robinhood Chain. It cannot submit governance actions.
+              This page reads the deployed Safe, Timelock, fee settings, ownership, and asset allowlist directly onchain. It cannot submit governance actions.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-violet-200 bg-white px-4 text-sm font-semibold text-slate-800">
-              <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Chain ID {ROBINHOOD_CHAIN_ID}
+              <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Mainnet
             </span>
             <button
               className="min-h-11 rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-givexa-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-givexa-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
@@ -235,7 +235,7 @@ export function GovernancePage() {
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900" role="alert">
             <div className="flex items-start gap-3">
               <WarningCircle className="mt-0.5 shrink-0" size={22} weight="fill" aria-hidden="true" />
-              <div><h2 className="font-semibold">Governance status is unavailable</h2><p className="mt-1 text-sm leading-6">The Robinhood Chain provider did not return the contract state. Check the RPC connection and retry.</p></div>
+              <div><h2 className="font-semibold">Governance status is unavailable</h2><p className="mt-1 text-sm leading-6">The network provider did not return the contract state. Check the RPC connection and retry.</p></div>
             </div>
           </div>
         )}

@@ -34,7 +34,7 @@ export function GiftApplication() {
         {route.mode === 'dashboard' && <DashboardFlow />}
         {route.mode === 'governance' && <GovernancePage />}
       </main>
-      <footer className="gift-app__footer"><span>Givexa on Robinhood Chain</span><span>Verified Gift Vault · Recipient pays no Givexa claim fee · <a href="https://x.com/Givexa_xyz" target="_blank" rel="noreferrer">Follow on X</a></span></footer>
+      <footer className="gift-app__footer"><span>Givexa on Solana</span><span>Verified Gift Vault · Recipient pays no Givexa claim fee · <a href="https://x.com/Givexa_xyz" target="_blank" rel="noreferrer">Follow on X</a></span></footer>
     </div>
   )
 }

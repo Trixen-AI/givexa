@@ -5,7 +5,7 @@ const ERROR_MESSAGES = {
   ScheduleTooSoon: 'Scheduled gifts must unlock at least 10 minutes from now.',
   ScheduleTooFar: 'Scheduled gifts cannot unlock more than 365 days from now.',
   ExpiryOutOfRange: 'Choose an expiry between 7 and 365 days.',
-  GiftNotFound: 'This gift does not exist on Robinhood Chain.',
+  GiftNotFound: 'This gift does not exist onchain.',
   GiftNotActive: 'This gift has already reached a final state.',
   GiftLocked: 'This gift is scheduled and is not claimable yet.',
   GiftExpired: 'This gift has expired and can no longer be claimed.',
@@ -22,10 +22,11 @@ export function getTransactionErrorMessage(error) {
   const text = `${error?.shortMessage || ''} ${error?.message || ''}`
   const matchedName = Object.keys(ERROR_MESSAGES).find((key) => text.includes(key))
   if (matchedName) return ERROR_MESSAGES[matchedName]
+  if (/Address ".*" is invalid|InvalidAddressError|ConnectorNotConnected|Connector not connected/iu.test(text)) return 'This wallet cannot sign Gift Vault transactions yet. No transaction was submitted.'
   if (/rejected|denied|UserRejectedRequestError/iu.test(text)) return 'The wallet request was cancelled. No transaction was submitted.'
-  if (/insufficient funds/iu.test(text)) return 'Your wallet does not have enough ETH to pay Robinhood Chain gas.'
+  if (/insufficient funds/iu.test(text)) return 'Your wallet does not have enough SOL to pay the Solana network fee.'
   if (/allowance|transfer amount exceeds allowance/iu.test(text)) return 'Token approval is insufficient. Approve the requested amount and try again.'
   if (/balance|exceeds balance/iu.test(text)) return 'Your wallet does not have enough of the selected asset.'
-  if (/network|chain/iu.test(text)) return 'Switch your wallet to Robinhood Chain and try again.'
+  if (/network|chain/iu.test(text)) return 'Switch your wallet to Solana and try again.'
   return 'The transaction could not be completed. Review the wallet details and try again.'
 }

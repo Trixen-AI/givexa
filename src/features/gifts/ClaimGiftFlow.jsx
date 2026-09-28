@@ -13,7 +13,7 @@ import { giftVaultAbi } from '../../web3/abis.js'
 import { getTransactionErrorMessage } from '../../web3/errors.js'
 import { formatDate, formatTokenAmount } from '../../web3/format.js'
 import { readClaimPayload } from '../../web3/giftLink.js'
-import { robinhoodChain } from '../../web3/network.js'
+import { isWalletNetwork, WALLET_NAMESPACE, WALLET_NETWORK_NAME, walletNetwork } from '../../web3/network.js'
 
 const DISPLAY_STATUS = ['Nonexistent', 'Scheduled', 'Active', 'Expired', 'Claimed', 'Cancelled', 'Returned']
 const FINAL_STATUS_COPY = {
@@ -92,7 +92,7 @@ export function ClaimGiftFlow({ routeGiftId }) {
   const giftId = validRoute ? payload.giftId : null
   const reduceMotion = useReducedMotion()
   const { open } = useAppKit()
-  const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' })
+  const { address, isConnected } = useAppKitAccount({ namespace: WALLET_NAMESPACE })
   const { chainId, switchNetwork } = useAppKitNetwork()
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID })
   const { writeContractAsync } = useWriteContract()
@@ -114,14 +114,14 @@ export function ClaimGiftFlow({ routeGiftId }) {
   })
 
   if (!validRoute) return <GiftLinkEntry />
-  if (giftLoading || statusLoading) return <div className="claim-loading app-card" role="status"><span className="app-spinner" /><strong>Reading Gift Vault #{routeGiftId}</strong><p>Checking the verified contract on Robinhood Chain.</p></div>
-  if (statusError) return <GiftState status="Unavailable" title="Robinhood Chain is unavailable" copy="Givexa could not verify the current Gift Vault status. Check the RPC connection and try again before using the private link." />
+  if (giftLoading || statusLoading) return <div className="claim-loading app-card" role="status"><span className="app-spinner" /><strong>Reading Gift Vault #{routeGiftId}</strong><p>Checking the verified Gift Vault contract.</p></div>
+  if (statusError) return <GiftState status="Unavailable" title="The network is unavailable" copy="Givexa could not verify the current Gift Vault status. Check the RPC connection and try again before using the private link." />
 
   const gift = normalizeGift(giftResult)
   const status = DISPLAY_STATUS[Number(statusResult ?? 0)] || 'Nonexistent'
   const selectedAsset = gift?.asset ? ASSET_BY_ADDRESS.get(gift.asset.toLowerCase()) : null
   const protectedGift = gift?.claimCodeHash && gift.claimCodeHash !== zeroHash
-  const onCorrectNetwork = Number(chainId) === ROBINHOOD_CHAIN_ID
+  const onCorrectNetwork = isWalletNetwork(chainId)
   const busy = transaction.status === 'pending'
   const claimable = status === 'Active'
 
@@ -141,18 +141,18 @@ export function ClaimGiftFlow({ routeGiftId }) {
 
   async function handleClaim(event) {
     event.preventDefault(); setFormError('')
-    if (!isConnected) { open({ view: 'Connect', namespace: 'eip155' }); return }
-    if (!onCorrectNetwork) { await switchNetwork(robinhoodChain); return }
+    if (!isConnected) { open({ view: 'Connect', namespace: WALLET_NAMESPACE }); return }
+    if (!onCorrectNetwork) { await switchNetwork(walletNetwork); return }
     const validationError = validateClaim()
     if (validationError) { setFormError(validationError); return }
-    if (!publicClient) { setFormError('Robinhood Chain is unavailable. Check your RPC connection and try again.'); return }
+    if (!publicClient) { setFormError('The network is unavailable. Check your connection and try again.'); return }
 
     try {
       setTransaction({ status: 'pending', message: 'Confirm the claim transaction in your wallet.', hash: '' })
       const codeBytes = protectedGift ? stringToHex(claimCode.trim().toUpperCase()) : '0x'
       const { request } = await publicClient.simulateContract({ account: address, address: CONTRACTS.giftVault, abi: giftVaultAbi, functionName: 'claim', args: [giftId, payload.secret, codeBytes] })
       const hash = await writeContractAsync(request)
-      setTransaction({ status: 'pending', message: 'Claim submitted. Waiting for Robinhood Chain confirmation.', hash })
+      setTransaction({ status: 'pending', message: 'Claim submitted. Waiting for onchain confirmation.', hash })
       const receipt = await publicClient.waitForTransactionReceipt({ hash })
       if (receipt.status !== 'success') throw new Error('Gift claim reverted.')
       await Promise.all([refetchGift(), refetchStatus()])
@@ -186,13 +186,13 @@ export function ClaimGiftFlow({ routeGiftId }) {
 
       <aside className="claim-panel app-card">
         <div><p className="app-eyebrow">Claim to your wallet</p><h2>Receive your gift</h2><p>The connected wallet becomes the permanent destination for this asset.</p></div>
-        <dl className="claim-details"><div><dt><Gift size={18} /> Asset</dt><dd>{selectedAsset.symbol}</dd></div><div><dt><CalendarBlank size={18} /> Claimable</dt><dd>{formatDate(gift.unlockAt)}</dd></div><div><dt><Clock size={18} /> Expires</dt><dd>{formatDate(gift.expiresAt)}</dd></div><div><dt><Wallet size={18} /> Network fee</dt><dd>Paid in ETH</dd></div></dl>
+        <dl className="claim-details"><div><dt><Gift size={18} /> Asset</dt><dd>{selectedAsset.symbol}</dd></div><div><dt><CalendarBlank size={18} /> Claimable</dt><dd>{formatDate(gift.unlockAt)}</dd></div><div><dt><Clock size={18} /> Expires</dt><dd>{formatDate(gift.expiresAt)}</dd></div><div><dt><Wallet size={18} /> Network fee</dt><dd>Paid in SOL</dd></div></dl>
         {status === 'Scheduled' && <div className="claim-scheduled"><Clock size={20} /><div><strong>Scheduled gift</strong><p>This gift unlocks on {formatDate(gift.unlockAt)}.</p></div></div>}
         {protectedGift && <div className="app-field"><label htmlFor="claim-code">Claim Code</label><input id="claim-code" value={claimCode} onChange={(event) => setClaimCode(event.target.value.toUpperCase().replace(/[^A-Z2-9]/gu, '').slice(0, 8))} placeholder="8 characters" autoComplete="one-time-code" spellCheck="false" maxLength="8" aria-describedby="claim-code-help" /><small id="claim-code-help">Ask the sender for the code shared separately from this link.</small></div>}
         <fieldset className="eligibility-fieldset"><legend>Eligibility declaration</legend><label><input type="checkbox" checked={ageConfirmed} onChange={(event) => setAgeConfirmed(event.target.checked)} /><span><Check size={14} /></span><p>I confirm that I am at least 18 years old.</p></label><label><input type="checkbox" checked={jurisdictionConfirmed} onChange={(event) => setJurisdictionConfirmed(event.target.checked)} /><span><Check size={14} /></span><p>I am not in, resident in, or a person of the United States, Canada, United Kingdom, Switzerland, UAE, or a sanctioned or otherwise restricted jurisdiction.</p></label></fieldset>
         <div className="claim-disclosure"><Info size={19} /><p>Stock Tokens are tokenised debt securities providing economic exposure. They do not grant ownership of the underlying security. Eligibility and issuer terms apply.</p></div>
         {formError && <p className="form-error" role="alert">{formError}</p>}<TransactionStatus {...transaction} />
-        <button className="app-primary-button app-primary-button--full" type="submit" disabled={busy || !claimable}>{status === 'Scheduled' ? 'Gift not unlocked yet' : !isConnected ? 'Connect wallet to claim' : !onCorrectNetwork ? 'Switch to Robinhood Chain' : busy ? 'Claim in progress' : `Claim ${selectedAsset.symbol}`}{!busy && <ArrowRight size={19} weight="bold" />}</button>
+        <button className="app-primary-button app-primary-button--full" type="submit" disabled={busy || !claimable}>{status === 'Scheduled' ? 'Gift not unlocked yet' : !isConnected ? 'Connect wallet to claim' : !onCorrectNetwork ? `Switch to ${WALLET_NETWORK_NAME}` : busy ? 'Claim in progress' : `Claim ${selectedAsset.symbol}`}{!busy && <ArrowRight size={19} weight="bold" />}</button>
         <p className="claim-panel__bearer"><LockKey size={15} /> Never share this page or its private URL while the gift is unclaimed.</p>
       </aside>
     </form>

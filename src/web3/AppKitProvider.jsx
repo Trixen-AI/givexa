@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { WagmiProvider } from 'wagmi'
-import { hasProductionRpc, robinhoodChain } from './network.js'
+import { SolanaAdapter } from '@reown/appkit-adapter-solana/react'
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { hasProductionRpc, robinhoodChain, walletCustomRpcUrls, walletNetwork } from './network.js'
 
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID?.trim()
 const publicAppUrl = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://givexa.xyz').replace(/\/$/u, '')
@@ -21,23 +21,23 @@ const queryClient = new QueryClient({
   },
 })
 
-let wagmiAdapter
+// Read-only client for the deployed Gift Vault contracts. No wallet connectors are attached.
+const contractReadConfig = createConfig({
+  chains: [robinhoodChain],
+  connectors: [],
+  transports: { [robinhoodChain.id]: http() },
+})
 
 if (web3Configuration.ready) {
-  wagmiAdapter = new WagmiAdapter({
-    networks: [robinhoodChain],
-    projectId,
-    ssr: false,
-  })
-
   createAppKit({
-    adapters: [wagmiAdapter],
-    networks: [robinhoodChain],
-    defaultNetwork: robinhoodChain,
+    adapters: [new SolanaAdapter()],
+    networks: [walletNetwork],
+    defaultNetwork: walletNetwork,
+    customRpcUrls: walletCustomRpcUrls,
     projectId,
     metadata: {
       name: 'Givexa',
-      description: 'Programmable asset gifts on Robinhood Chain',
+      description: 'Programmable asset gifts on Solana',
       url: publicAppUrl,
       icons: [`${publicAppUrl}/brand/givexa-logo.png`],
     },
@@ -57,7 +57,7 @@ if (web3Configuration.ready) {
 export function AppKitProvider({ children }) {
   if (!web3Configuration.ready) return children
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+    <WagmiProvider config={contractReadConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )

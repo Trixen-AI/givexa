@@ -1,8 +1,9 @@
 {
   "name": "Givexa",
   "short_name": "Givexa",
-  "description": "The gifting layer for tokenized markets on Robinhood Chain.",
+  "description": "The gifting layer for tokenized markets on Solana.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#6847ff",

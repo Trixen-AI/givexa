@@ -10,7 +10,7 @@ export function TransactionStatus({ status, message, hash }) {
       <div>
         <strong>{status === 'success' ? 'Transaction confirmed' : status === 'error' ? 'Action needed' : 'Waiting for confirmation'}</strong>
         <p>{message}</p>
-        {hash && <a href={transactionUrl(hash)} target="_blank" rel="noreferrer">View on Blockscout</a>}
+        {hash && <a href={transactionUrl(hash)} target="_blank" rel="noreferrer">View in explorer</a>}
       </div>
     </div>
   )

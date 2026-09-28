@@ -1,12 +1,12 @@
 import { ArrowLeft, ArrowRight, ArrowSquareOut, CheckCircle, Copy, LinkSimple, LockKey, ShieldCheck, Wallet, XLogo } from '@phosphor-icons/react'
 import { BrandLogo } from '../../components/BrandLogo.jsx'
-import { BLOCK_EXPLORER_URL, CONTRACTS, ROBINHOOD_CHAIN_ID, SUPPORTED_ASSETS } from '../../config/deployment.js'
+import { BLOCK_EXPLORER_URL, CONTRACTS, SUPPORTED_ASSETS } from '../../config/deployment.js'
 
 const steps = [
-  ['01', 'Connect', 'Connect an EVM wallet through Reown and switch to Robinhood Chain.'],
+  ['01', 'Connect', 'Connect a Solana wallet such as Phantom, Solflare, or Backpack through Reown.'],
   ['02', 'Choose an asset', 'Select one of the ten verified Stock Token contracts and enter the gift principal.'],
   ['03', 'Approve', 'Approve only the amount Givexa needs to fund the Gift Vault.'],
-  ['04', 'Create', 'Review principal, protocol fee, unlock time, expiry, and network gas before signing.'],
+  ['04', 'Create', 'Review principal, protocol fee, unlock time, expiry, and the Solana network fee before signing.'],
   ['05', 'Share', 'Send the private claim URL. Its secret remains in the URL fragment and is never sent to a server.'],
   ['06', 'Claim', 'The recipient connects a wallet and claims the full principal from the verified contract.'],
 ]
@@ -42,7 +42,7 @@ export default function DocsPage() {
           <div className="mx-auto max-w-[1200px] px-[22px] py-20 md:px-8 md:py-28">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-givexa-500">Givexa documentation</p>
             <h1 className="mt-5 max-w-[850px] text-[clamp(44px,7vw,76px)] font-normal leading-[1.01] tracking-[-0.05em]">Give tokenized assets through a private claim link.</h1>
-            <p className="mt-7 max-w-[720px] text-base leading-relaxed text-[#68636e] md:text-lg">Givexa is a non-custodial interface for creating, claiming, cancelling, and recovering funded Gift Vaults on Robinhood Chain.</p>
+            <p className="mt-7 max-w-[720px] text-base leading-relaxed text-[#68636e] md:text-lg">Givexa is a non-custodial interface for creating, claiming, cancelling, and recovering funded Gift Vaults on Solana.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-givexa-500 px-5 font-semibold text-white" href="/app">Create a gift <ArrowRight size={18} /></a>
               <ExternalLink href={`${BLOCK_EXPLORER_URL}/address/${CONTRACTS.giftVault}`}>Verified contract</ExternalLink>
@@ -76,8 +76,8 @@ export default function DocsPage() {
 
               <section id="contracts">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-givexa-500">Mainnet contracts</p>
-                <h2 className="mt-4 text-[clamp(34px,5vw,50px)] font-normal tracking-[-0.045em]">Verified deployment on chain {ROBINHOOD_CHAIN_ID}.</h2>
-                <div className="mt-9 overflow-hidden rounded-2xl border border-black/[0.08] bg-white">{contracts.map(([label, address]) => <div className="grid gap-2 border-b border-black/[0.07] p-5 last:border-0 md:grid-cols-[180px_1fr_auto] md:items-center" key={label}><strong className="text-sm">{label}</strong><code className="overflow-hidden text-ellipsis text-[11px] text-[#6e6875]">{address}</code><ExternalLink href={`${BLOCK_EXPLORER_URL}/address/${address}`}>Blockscout</ExternalLink></div>)}</div>
+                <h2 className="mt-4 text-[clamp(34px,5vw,50px)] font-normal tracking-[-0.045em]">Verified mainnet deployment.</h2>
+                <div className="mt-9 overflow-hidden rounded-2xl border border-black/[0.08] bg-white">{contracts.map(([label, address]) => <div className="grid gap-2 border-b border-black/[0.07] p-5 last:border-0 md:grid-cols-[180px_1fr_auto] md:items-center" key={label}><strong className="text-sm">{label}</strong><code className="overflow-hidden text-ellipsis text-[11px] text-[#6e6875]">{address}</code><ExternalLink href={`${BLOCK_EXPLORER_URL}/address/${address}`}>Explorer</ExternalLink></div>)}</div>
               </section>
 
               <section id="supported-assets">
@@ -102,7 +102,7 @@ export default function DocsPage() {
           <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1fr_auto] md:items-end">
             <div>
               <BrandLogo inverse />
-              <p className="mt-5 max-w-[430px] text-[13px] leading-relaxed text-white/45">Documentation for creating, sharing, claiming, cancelling, and recovering Gift Vaults on Robinhood Chain.</p>
+              <p className="mt-5 max-w-[430px] text-[13px] leading-relaxed text-white/45">Documentation for creating, sharing, claiming, cancelling, and recovering Gift Vaults on Solana.</p>
             </div>
             <nav className="flex flex-wrap items-center gap-2" aria-label="Documentation footer navigation">
               <a className="inline-flex min-h-11 items-center rounded-xl px-4 text-[13px] font-semibold transition hover:bg-white/[0.07] hover:text-white" href="/">Main website</a>
@@ -112,7 +112,7 @@ export default function DocsPage() {
           </div>
           <div className="flex flex-col gap-3 pt-7 text-[10px] leading-relaxed text-white/35 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 Givexa. All rights reserved.</p>
-            <p>Robinhood Chain · Chain ID {ROBINHOOD_CHAIN_ID}</p>
+            <p>Built on Solana</p>
           </div>
         </div>
       </footer>

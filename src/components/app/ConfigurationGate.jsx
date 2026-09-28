@@ -15,7 +15,7 @@ export function ConfigurationGate() {
         <span className="configuration-card__icon"><Gear size={30} weight="duotone" /></span>
         <p className="app-eyebrow">Configuration required</p>
         <h1>Connect the production wallet infrastructure.</h1>
-        <p>Copy <code>.env.example</code> to <code>.env.local</code> and provide the public Reown project ID and a browser-restricted Robinhood Chain RPC URL.</p>
+        <p>Copy <code>.env.example</code> to <code>.env.local</code> and provide the public Reown project ID and the browser-restricted RPC URL named below.</p>
         <div className="configuration-card__notice">
           <ShieldWarning size={22} />
           <span>Never place a wallet private key or unrestricted provider credential in a Vite environment variable.</span>

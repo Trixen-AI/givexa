@@ -1,6 +1,6 @@
 # Givexa
 
-Production React and Vite frontend for Givexa, the gifting layer for tokenized markets on Robinhood Chain. The repository includes the marketing website, Reown AppKit wallet integration, complete gift lifecycle flows, a direct-chain user dashboard, read-only governance visibility, and the verified Foundry contract suite.
+Production React and Vite frontend for Givexa, the gifting layer for tokenized markets on Solana. The repository includes the marketing website, Reown AppKit Solana wallet integration, complete gift lifecycle flows, a direct-chain user dashboard, read-only governance visibility, and the verified Foundry contract suite.
 
 ## Application routes
 
@@ -27,11 +27,21 @@ pnpm dev
 
 Configure these public browser values in `.env.local`:
 
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `VITE_REOWN_PROJECT_ID` | Yes | Reown Cloud project ID for the Solana wallet connect modal |
+| `VITE_ROBINHOOD_RPC_URL` | Yes | Read RPC for the existing Gift Vault contracts (unchanged, still on Robinhood Chain) |
+| `VITE_SOLANA_RPC_URL` | No | Solana mainnet RPC for the wallet modal. Empty uses Reown's default |
+| `VITE_PUBLIC_APP_URL` | Yes | Canonical origin, `https://givexa.xyz` |
+
 ```dotenv
 VITE_REOWN_PROJECT_ID=your_public_reown_project_id
 VITE_ROBINHOOD_RPC_URL=https://your-browser-restricted-robinhood-chain-rpc
+VITE_SOLANA_RPC_URL=https://your-browser-restricted-solana-mainnet-rpc
 VITE_PUBLIC_APP_URL=https://givexa.xyz
 ```
+
+The app routes show a configuration screen until `VITE_REOWN_PROJECT_ID` and `VITE_ROBINHOOD_RPC_URL` are set. The marketing site and `/docs` work without them.
 
 Frontend variables are included in the browser bundle. Never put a deployer key, wallet private key, Safe signer key, server credential, or unrestricted provider credential in a `VITE_` variable.
 
@@ -45,19 +55,22 @@ pnpm build
 
 `pnpm check` runs all three checks. The optimized output is generated in `dist/`. Wallet dependencies are route-split and only downloaded on application routes.
 
-## Hosting requirements
+## Deploying to Vercel
 
-The host must serve `index.html` for `/docs`, `/app`, `/claim`, `/claim/*`, `/dashboard`, `/gift/*`, and `/governance` so direct navigation works. Keep HTTPS enabled and apply a restrictive Content Security Policy appropriate for Reown, the selected RPC provider, and the application domain.
+`vercel.json` defines the install and build commands (pnpm 11.24.0 via `npx`), the `dist` output, the SPA fallback for `/docs`, `/app`, `/claim/*`, `/dashboard`, `/gift/*` and `/governance`, immutable asset caching, `noindex` on private claim, gift and dashboard routes, and baseline security headers.
 
-For Netlify, `netlify.toml` already defines the production build, `dist` publish directory, SPA fallback, immutable asset caching, and baseline security headers. Add these environment variables in Netlify under Site configuration > Environment variables:
+1. Import `Trixen-AI/givexa` in Vercel. The framework preset is detected as Vite; keep the settings from `vercel.json`.
+2. Under Project Settings > Environment Variables, add for Production (and Preview if wanted):
+   - `VITE_REOWN_PROJECT_ID`
+   - `VITE_ROBINHOOD_RPC_URL`
+   - `VITE_PUBLIC_APP_URL` = `https://givexa.xyz`
+   - `VITE_SOLANA_RPC_URL` (optional)
+3. Under Project Settings > Domains, add `givexa.xyz` and `www.givexa.xyz` (redirect `www` to the apex) and set the DNS records Vercel shows.
+4. In Reown Cloud, add `givexa.xyz` and the Vercel preview domain to the project's allowed domains. Restrict both RPC credentials to the same origins.
 
-```text
-VITE_REOWN_PROJECT_ID
-VITE_ROBINHOOD_RPC_URL
-VITE_PUBLIC_APP_URL
-```
+`VITE_` values are baked in at build time, so redeploy after changing them.
 
-Restrict the Reown project and RPC credential to the final Netlify and custom domains before public launch.
+Search engines get `robots.txt`, `sitemap.xml`, canonical URLs, Open Graph and Twitter tags, and JSON-LD from `index.html`; `src/seo.js` sets the title, description and canonical URL per route.
 
 Recommended baseline headers:
 

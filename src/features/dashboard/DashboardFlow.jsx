@@ -16,11 +16,13 @@ import {
   Wallet,
   WarningCircle,
 } from '@phosphor-icons/react'
+import { isAddress } from 'viem'
 import { usePublicClient } from 'wagmi'
 import { ASSET_BY_ADDRESS, ROBINHOOD_CHAIN_ID, SUPPORTED_ASSETS } from '../../config/deployment.js'
 import { fetchWalletGiftHistory } from '../../web3/giftEvents.js'
 import { createBlockscoutEventClient } from '../../web3/blockscoutEvents.js'
 import { formatDate, formatTokenAmount, transactionUrl } from '../../web3/format.js'
+import { WALLET_NAMESPACE } from '../../web3/network.js'
 import {
   belongsToDashboardView,
   dashboardAssetMatches,
@@ -54,7 +56,7 @@ function DashboardEmpty({ filtered, onReset }) {
     <section className="dashboard-empty app-card">
       <span><Gift size={34} weight="duotone" /></span>
       <h2>{filtered ? 'No gifts match these filters.' : 'Your gift history starts here.'}</h2>
-      <p>{filtered ? 'Reset the filters or choose another asset and status.' : 'Create a funded gift and its lifecycle will appear here directly from Robinhood Chain.'}</p>
+      <p>{filtered ? 'Reset the filters or choose another asset and status.' : 'Create a funded gift and its lifecycle will appear here directly from onchain data.'}</p>
       {filtered
         ? <button className="app-secondary-button" type="button" onClick={onReset}>Reset filters</button>
         : <a className="app-primary-button" href="/app">Create a gift <ArrowRight size={17} weight="bold" /></a>}
@@ -78,7 +80,7 @@ function GiftRecord({ record }) {
       <div className="dashboard-gift-row__meta"><small>Created</small><strong>{record.gift ? formatDate(record.gift.createdAt) : 'Unavailable'}</strong></div>
       <div><span className={`gift-status-badge gift-status-badge--${statusKey}`}><span />{STATUS_LABELS[statusKey] || 'Unavailable'}</span></div>
       <div className="dashboard-gift-row__actions">
-        {transactionHash && <a href={transactionUrl(transactionHash)} target="_blank" rel="noreferrer" aria-label={`View latest Gift Vault ${record.giftId} transaction on Blockscout`}><ArrowSquareOut size={17} /></a>}
+        {transactionHash && <a href={transactionUrl(transactionHash)} target="_blank" rel="noreferrer" aria-label={`View latest Gift Vault ${record.giftId} transaction in the explorer`}><ArrowSquareOut size={17} /></a>}
         <a className="app-secondary-button" href={`/gift/${record.giftId}`}>Details <ArrowRight size={16} weight="bold" /></a>
       </div>
     </article>
@@ -91,30 +93,31 @@ function ConnectDashboard() {
     <section className="dashboard-connect app-card">
       <span><Wallet size={38} weight="duotone" /></span><p className="app-eyebrow">Private wallet view</p>
       <h1>Connect to read your gift history.</h1>
-      <p>Givexa queries public Robinhood Chain events for the connected address. No backend profile or custody account is created.</p>
-      <button className="app-primary-button" type="button" onClick={() => open({ view: 'Connect', namespace: 'eip155' })}>Connect wallet <ArrowRight size={18} weight="bold" /></button>
+      <p>Givexa queries public onchain events for the connected Solana address. No backend profile or custody account is created.</p>
+      <button className="app-primary-button" type="button" onClick={() => open({ view: 'Connect', namespace: WALLET_NAMESPACE })}>Connect wallet <ArrowRight size={18} weight="bold" /></button>
     </section>
   )
 }
 
 export function DashboardFlow() {
   const reduceMotion = useReducedMotion()
-  const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' })
+  const { address, isConnected } = useAppKitAccount({ namespace: WALLET_NAMESPACE })
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID })
   const [view, setView] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [assetFilter, setAssetFilter] = useState('all')
 
   const historyQuery = useQuery({
-    queryKey: ['wallet-gift-history', ROBINHOOD_CHAIN_ID, address?.toLowerCase()],
-    queryFn: ({ signal }) => fetchWalletGiftHistory({
+    queryKey: ['wallet-gift-history', ROBINHOOD_CHAIN_ID, address],
+    // Gift Vault events are indexed by contract accounts. Other wallet addresses have no history there.
+    queryFn: ({ signal }) => (!isAddress(address) ? EMPTY_HISTORY : fetchWalletGiftHistory({
       client: publicClient,
       eventClient: blockscoutEventClient,
       walletAddress: address,
       confirmationBlocks: 2n,
       chunkSize: 1_000_000_000n,
       signal,
-    }),
+    })),
     enabled: Boolean(isConnected && address && publicClient),
     staleTime: 20_000,
     refetchInterval: 45_000,
@@ -139,12 +142,12 @@ export function DashboardFlow() {
   return (
     <div className="dashboard-page">
       <section className="dashboard-heading">
-        <div><p className="app-eyebrow">Your onchain activity</p><h1>Gift dashboard</h1><p>Track sent and received Gift Vaults without a Givexa backend. Events come from Blockscout and current state is verified from the Gift Vault contract.</p></div>
+        <div><p className="app-eyebrow">Your onchain activity</p><h1>Gift dashboard</h1><p>Track sent and received Gift Vaults without a Givexa backend. Events come from a public onchain index and current state is verified from the Gift Vault contract.</p></div>
         <div className="dashboard-heading__actions"><button className="app-secondary-button" type="button" onClick={() => historyQuery.refetch()} disabled={historyQuery.isFetching}><ArrowClockwise className={historyQuery.isFetching ? 'animate-spin' : ''} size={17} /> {historyQuery.isFetching ? 'Refreshing' : 'Refresh'}</button><a className="app-primary-button" href="/app">Create gift <ArrowRight size={17} weight="bold" /></a></div>
       </section>
 
       {historyQuery.isPending && <section className="dashboard-loading" role="status" aria-label="Loading gift dashboard">{[0, 1, 2, 3].map((item) => <span key={item} />)}<p className="sr-only">Reading confirmed gift events.</p></section>}
-      {historyQuery.isError && <section className="dashboard-error app-card" role="alert"><WarningCircle size={23} weight="fill" /><div><h2>Gift history is unavailable</h2><p>Blockscout or the configured Robinhood Chain provider did not return a complete verified history. No partial result is shown.</p><button className="app-secondary-button" type="button" onClick={() => historyQuery.refetch()}>Try again</button></div></section>}
+      {historyQuery.isError && <section className="dashboard-error app-card" role="alert"><WarningCircle size={23} weight="fill" /><div><h2>Gift history is unavailable</h2><p>The event index or the configured network provider did not return a complete verified history. No partial result is shown.</p><button className="app-secondary-button" type="button" onClick={() => historyQuery.refetch()}>Try again</button></div></section>}
 
       {historyQuery.isSuccess && (
         <>
@@ -174,7 +177,7 @@ export function DashboardFlow() {
           </section>
 
           <section className="dashboard-explainer">
-            <CalendarBlank size={20} weight="duotone" /><div><strong>Verified event history</strong><p>Givexa reads public lifecycle events from Blockscout, waits for two confirmations, removes duplicate logs, and refreshes every Gift Vault state directly from the contract.</p></div>
+            <CalendarBlank size={20} weight="duotone" /><div><strong>Verified event history</strong><p>Givexa reads public lifecycle events from an onchain index, waits for two confirmations, removes duplicate logs, and refreshes every Gift Vault state directly from the contract.</p></div>
           </section>
         </>
       )}
