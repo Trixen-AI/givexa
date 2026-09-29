@@ -95,11 +95,11 @@ async function readGovernanceState(publicClient) {
 function ExplorerLink({ address, children, className = '' }) {
   return (
     <a
-      className={`inline-flex min-h-11 items-center gap-2 rounded-xl text-sm font-semibold text-givexa-700 underline decoration-givexa-300 underline-offset-4 transition-colors hover:text-givexa-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-givexa-500 focus-visible:ring-offset-2 ${className}`}
+      className={`inline-flex min-h-11 items-center gap-2 rounded-xl text-sm font-semibold text-latentia-700 underline decoration-latentia-300 underline-offset-4 transition-colors hover:text-latentia-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latentia-500 focus-visible:ring-offset-2 ${className}`}
       href={`${BLOCK_EXPLORER_URL}/address/${address}`}
       target="_blank"
       rel="noreferrer"
-      aria-label={`${children}. View in explorer`}
+      aria-label={`${children}. View on Blockscout`}
     >
       {children}<ArrowSquareOut size={17} aria-hidden="true" />
     </a>
@@ -119,7 +119,7 @@ function PostureCard({ icon: Icon, title, value, detail, healthy }) {
   return (
     <article className="rounded-3xl border border-violet-100 bg-white p-5 shadow-[0_12px_40px_rgba(53,30,110,0.06)] sm:p-6">
       <div className="flex items-start justify-between gap-4">
-        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-givexa-50 text-givexa-700">
+        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-latentia-50 text-latentia-700">
           <Icon size={23} weight="duotone" aria-hidden="true" />
         </span>
         <StatusPill healthy={healthy}>{healthy ? 'Verified' : 'Review'}</StatusPill>
@@ -157,7 +157,7 @@ function LoadingState() {
           <div className="mt-5 h-4 w-full rounded bg-slate-100" />
         </div>
       ))}
-      <span className="sr-only">Reading governance contracts onchain.</span>
+      <span className="sr-only">Reading governance contracts from Robinhood Chain.</span>
     </div>
   )
 }
@@ -205,20 +205,20 @@ export function GovernancePage() {
       <div className="overflow-hidden rounded-[30px] border border-violet-100 bg-[radial-gradient(circle_at_80%_0%,rgba(183,164,255,0.32),transparent_34%),linear-gradient(135deg,#fbfaff_0%,#ffffff_60%)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
-            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-givexa-600">Onchain governance</p>
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-latentia-600">Onchain governance</p>
             <h1 id="governance-title" className="mt-4 max-w-2xl text-4xl font-medium tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
               Protocol controls, visible to everyone.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              This page reads the deployed Safe, Timelock, fee settings, ownership, and asset allowlist directly onchain. It cannot submit governance actions.
+              This page reads the deployed Safe, Timelock, fee settings, ownership, and asset allowlist directly from Robinhood Chain. It cannot submit governance actions.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-violet-200 bg-white px-4 text-sm font-semibold text-slate-800">
-              <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Mainnet
+              <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Chain ID {ROBINHOOD_CHAIN_ID}
             </span>
             <button
-              className="min-h-11 rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-givexa-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-givexa-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+              className="min-h-11 rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-latentia-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latentia-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
               type="button"
               onClick={() => governanceQuery.refetch()}
               disabled={governanceQuery.isFetching}
@@ -235,7 +235,7 @@ export function GovernancePage() {
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900" role="alert">
             <div className="flex items-start gap-3">
               <WarningCircle className="mt-0.5 shrink-0" size={22} weight="fill" aria-hidden="true" />
-              <div><h2 className="font-semibold">Governance status is unavailable</h2><p className="mt-1 text-sm leading-6">The network provider did not return the contract state. Check the RPC connection and retry.</p></div>
+              <div><h2 className="font-semibold">Governance status is unavailable</h2><p className="mt-1 text-sm leading-6">The Robinhood Chain provider did not return the contract state. Check the RPC connection and retry.</p></div>
             </div>
           </div>
         )}
@@ -284,12 +284,12 @@ export function GovernancePage() {
         <>
           <section className="mt-14" aria-labelledby="governance-controls-title">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-              <div><p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-givexa-600">Control plane</p><h2 id="governance-controls-title" className="mt-2 text-3xl font-medium tracking-[-0.035em] text-slate-950">Verified contract relationships</h2></div>
+              <div><p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-latentia-600">Control plane</p><h2 id="governance-controls-title" className="mt-2 text-3xl font-medium tracking-[-0.035em] text-slate-950">Verified contract relationships</h2></div>
               {refreshedAt && <p className="text-xs text-slate-500">Last refreshed at {refreshedAt}</p>}
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <ContractCard name="Governance Safe" role="Proposes timelocked changes and acts as emergency guardian." address={CONTRACTS.treasurySafe} state={posture.safeHealthy ? '2-of-3' : 'Review'} healthy={posture.safeHealthy} />
-              <ContractCard name="Timelock" role="Owns every configurable Givexa protocol contract." address={CONTRACTS.timelock} state={posture.ownershipHealthy ? 'Owner' : 'Review'} healthy={posture.ownershipHealthy} />
+              <ContractCard name="Timelock" role="Owns every configurable Latentia protocol contract." address={CONTRACTS.timelock} state={posture.ownershipHealthy ? 'Owner' : 'Review'} healthy={posture.ownershipHealthy} />
               <ContractCard name="Gift Vault" role="Escrows principal and enforces the gift lifecycle." address={CONTRACTS.giftVault} state={posture.routesHealthy ? 'Connected' : 'Review'} healthy={posture.routesHealthy} />
               <ContractCard name="Asset Registry" role={`${posture.supportedAssets} supported assets read directly onchain.`} address={CONTRACTS.assetRegistry} state={sameAddress(values.registryOwner, CONTRACTS.timelock) ? 'Timelocked' : 'Review'} healthy={sameAddress(values.registryOwner, CONTRACTS.timelock)} />
               <ContractCard name="Fee Controller" role={`Current creation fee ${formatFee(values.feeBps)} with a ${formatFee(values.feeCapBps)} contract cap.`} address={CONTRACTS.feeController} state={posture.feeHealthy ? 'Within cap' : 'Review'} healthy={posture.feeHealthy} />

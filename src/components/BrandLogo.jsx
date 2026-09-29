@@ -1,18 +1,31 @@
+// Latentia logo. Generated from one source: mark geometry and Inter Bold outlined wordmark.
+const L_PATH = 'M8 15A7 7 0 0 1 22 15L22 39A3 3 0 0 0 25 42L49 42A7 7 0 0 1 49 56L15 56A7 7 0 0 1 8 49Z'
+const DIAMOND_PATH = 'M41.12 15.81L48.19 22.88Q50.31 25 48.19 27.12L41.12 34.19Q39 36.31 36.88 34.19L29.81 27.12Q27.69 25 29.81 22.88L36.88 15.81Q39 13.69 41.12 15.81Z'
+const WORDMARK_PATH = 'M45.40 25.09L38.92 25.09L38.92 14.91L41.01 14.91L41.01 23.36L45.40 23.36L45.40 25.09ZM51.91 25.09L49.61 25.09L53.09 14.91L55.82 14.91L59.39 25.09L57.08 25.09L56.29 22.73L52.67 22.73L51.91 25.09ZM53.19 21.09L55.75 21.09L55.44 20.18Q55.15 19.23 54.85 18.09L54.85 18.09Q54.65 17.36 54.44 16.55L54.44 16.55Q54.23 17.38 54.05 18.11L54.05 18.11Q53.77 19.25 53.49 20.18L53.49 20.18L53.19 21.09ZM66.72 16.64L63.60 16.64L63.60 14.91L71.92 14.91L71.92 16.64L68.81 16.64L68.81 25.09L66.72 25.09L66.72 16.64ZM83.54 25.09L76.72 25.09L76.72 14.91L83.53 14.91L83.53 16.64L78.80 16.64L78.80 19.10L83.18 19.10L83.18 20.80L78.80 20.80L78.80 23.36L83.54 23.36L83.54 25.09ZM90.71 25.09L88.58 25.09L88.58 14.91L90.90 14.91L94.12 20.06Q94.37 20.46 94.62 20.92Q94.88 21.39 95.14 21.96L95.14 21.96Q95.27 22.24 95.40 22.55L95.40 22.55Q95.38 22.29 95.37 22.02L95.37 22.02Q95.33 21.38 95.30 20.79Q95.27 20.21 95.27 19.79L95.27 19.79L95.27 14.91L97.40 14.91L97.40 25.09L95.07 25.09L92.15 20.42Q91.83 19.89 91.55 19.40Q91.28 18.90 90.99 18.30L90.99 18.30Q90.80 17.94 90.58 17.48L90.58 17.48Q90.60 17.89 90.62 18.28L90.62 18.28Q90.66 18.96 90.69 19.51Q90.71 20.06 90.71 20.41L90.71 20.41L90.71 25.09ZM105.32 16.64L102.20 16.64L102.20 14.91L110.52 14.91L110.52 16.64L107.41 16.64L107.41 25.09L105.32 25.09L105.32 16.64ZM115.32 14.91L117.40 14.91L117.40 25.09L115.32 25.09L115.32 14.91ZM124.32 25.09L122.02 25.09L125.50 14.91L128.23 14.91L131.80 25.09L129.48 25.09L128.70 22.73L125.08 22.73L124.32 25.09ZM125.60 21.09L128.16 21.09L127.85 20.18Q127.56 19.23 127.25 18.09L127.25 18.09Q127.06 17.36 126.84 16.55L126.84 16.55Q126.64 17.38 126.46 18.11L126.46 18.11Q126.17 19.25 125.89 20.18L125.89 20.18L125.60 21.09Z'
+
+export function LatentiaMark({ className = '', inverse = false }) {
+  return (
+    <svg className={className} viewBox="8 8 48 48" aria-hidden="true" focusable="false">
+      <path fill={inverse ? '#ffffff' : '#6d45ff'} d={L_PATH} />
+      <path fill={inverse ? '#d8ceff' : '#b6a5ff'} d={DIAMOND_PATH} />
+    </svg>
+  )
+}
+
 export function BrandLogo({ inverse = false }) {
   return (
     <a
-      className={`inline-flex min-h-11 items-center gap-2 whitespace-nowrap ${inverse ? 'text-white' : 'text-[#0c0b10]'}`}
+      className={`inline-flex min-h-11 items-center whitespace-nowrap ${inverse ? 'text-white' : 'text-[#0c0b10]'}`}
       href="/"
-      aria-label="Givexa home"
+      aria-label="Latentia home"
     >
-      <img
-        className="h-9 w-9 object-contain sm:h-10 sm:w-10"
-        src="/brand/givexa-logo.png"
-        alt=""
-        width="40"
-        height="40"
-      />
-      <span className="text-[13px] font-bold tracking-[0.24em] sm:text-[14px]">GIVEXA</span>
+      <svg className="h-9 w-auto sm:h-10" viewBox="0 0 133 40" aria-hidden="true" focusable="false">
+        <g transform="translate(-4.666666666666667 1.333333333333333) scale(0.5833333333333334)">
+          <path fill="#6d45ff" d={L_PATH} />
+          <path fill="#b6a5ff" d={DIAMOND_PATH} />
+        </g>
+        <path fill="currentColor" d={WORDMARK_PATH} />
+      </svg>
     </a>
   )
 }

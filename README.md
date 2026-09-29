@@ -1,6 +1,6 @@
-# Givexa
+# Latentia
 
-Production React and Vite frontend for Givexa, the gifting layer for tokenized markets on Solana. The repository includes the marketing website, Reown AppKit Solana wallet integration, complete gift lifecycle flows, a direct-chain user dashboard, read-only governance visibility, and the verified Foundry contract suite.
+Production React and Vite frontend for Latentia, the gifting layer for tokenized markets on Robinhood Chain. The repository includes the marketing website, Reown AppKit wallet integration, complete gift lifecycle flows, a direct-chain user dashboard, read-only governance visibility, and the verified Foundry contract suite.
 
 ## Application routes
 
@@ -29,16 +29,14 @@ Configure these public browser values in `.env.local`:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `VITE_REOWN_PROJECT_ID` | Yes | Reown Cloud project ID for the Solana wallet connect modal |
-| `VITE_ROBINHOOD_RPC_URL` | Yes | Read RPC for the existing Gift Vault contracts (unchanged, still on Robinhood Chain) |
-| `VITE_SOLANA_RPC_URL` | No | Solana mainnet RPC for the wallet modal. Empty uses Reown's default |
-| `VITE_PUBLIC_APP_URL` | Yes | Canonical origin, `https://givexa.xyz` |
+| `VITE_REOWN_PROJECT_ID` | Yes | Reown Cloud project ID for the wallet connect modal |
+| `VITE_ROBINHOOD_RPC_URL` | Yes | Browser-restricted Robinhood Chain RPC |
+| `VITE_PUBLIC_APP_URL` | Yes | Canonical origin, `https://latentiaapp.org` |
 
 ```dotenv
 VITE_REOWN_PROJECT_ID=your_public_reown_project_id
 VITE_ROBINHOOD_RPC_URL=https://your-browser-restricted-robinhood-chain-rpc
-VITE_SOLANA_RPC_URL=https://your-browser-restricted-solana-mainnet-rpc
-VITE_PUBLIC_APP_URL=https://givexa.xyz
+VITE_PUBLIC_APP_URL=https://latentiaapp.org
 ```
 
 The app routes show a configuration screen until `VITE_REOWN_PROJECT_ID` and `VITE_ROBINHOOD_RPC_URL` are set. The marketing site and `/docs` work without them.
@@ -63,10 +61,9 @@ pnpm build
 2. Under Project Settings > Environment Variables, add for Production (and Preview if wanted):
    - `VITE_REOWN_PROJECT_ID`
    - `VITE_ROBINHOOD_RPC_URL`
-   - `VITE_PUBLIC_APP_URL` = `https://givexa.xyz`
-   - `VITE_SOLANA_RPC_URL` (optional)
-3. Under Project Settings > Domains, add `givexa.xyz` and `www.givexa.xyz` (redirect `www` to the apex) and set the DNS records Vercel shows.
-4. In Reown Cloud, add `givexa.xyz` and the Vercel preview domain to the project's allowed domains. Restrict both RPC credentials to the same origins.
+   - `VITE_PUBLIC_APP_URL` = `https://latentiaapp.org`
+3. Under Project Settings > Domains, add `latentiaapp.org` and `www.latentiaapp.org` (redirect `www` to the apex) and set the DNS records Vercel shows.
+4. In Reown Cloud, add `latentiaapp.org` and the Vercel preview domain to the project's allowed domains. Restrict the RPC credential to the same origins.
 
 `VITE_` values are baked in at build time, so redeploy after changing them.
 
@@ -94,7 +91,7 @@ Robinhood Chain ID: `4663`
 
 The frontend performs contract reads, allowance checks, transaction simulation, wallet confirmation, and receipt confirmation before reporting success. The sender pays the current onchain creation fee. The recipient receives the full principal and pays Robinhood Chain gas in ETH.
 
-The dashboard does not use a Givexa backend. It retrieves public lifecycle events from the Robinhood Chain Blockscout API, waits for two confirmations, removes duplicate logs, and verifies current Gift Vault snapshots directly through the configured RPC. This avoids provider-specific `eth_getLogs` block-range limits while keeping state verification onchain. Because a bearer gift has no recipient address before claim, pending incoming gifts remain private in their claim links and appear as received only after claim.
+The dashboard does not use a Latentia backend. It retrieves public lifecycle events from the Robinhood Chain Blockscout API, waits for two confirmations, removes duplicate logs, and verifies current Gift Vault snapshots directly through the configured RPC. This avoids provider-specific `eth_getLogs` block-range limits while keeping state verification onchain. Because a bearer gift has no recipient address before claim, pending incoming gifts remain private in their claim links and appear as received only after claim.
 
 ## Operations
 
@@ -123,8 +120,8 @@ The monitor never requests a signer and never broadcasts. Operational references
 - `src/styles.css` shared responsive design system
 - `public/stocks/` ten supported Stock Token logo assets
 - `contracts/` verified Foundry smart contract project and tests
-- `design-system/givexa-app/MASTER.md` persisted UI/UX Pro Max guidance
-- `design-system/givexa-app/pages/dashboard.md` dashboard-specific UI/UX override
+- `design-system/latentia-app/MASTER.md` persisted UI/UX Pro Max guidance
+- `design-system/latentia-app/pages/dashboard.md` dashboard-specific UI/UX override
 
 ## Product and compliance boundaries
 

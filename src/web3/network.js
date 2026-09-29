@@ -1,23 +1,6 @@
-import { solana } from '@reown/appkit/networks'
 import { defineChain } from 'viem'
 import { BLOCK_EXPLORER_URL, ROBINHOOD_CHAIN_ID } from '../config/deployment.js'
 
-// Wallet network. Reown AppKit connects Solana wallets only.
-export const walletNetwork = solana
-export const WALLET_NAMESPACE = 'solana'
-export const WALLET_NETWORK_NAME = 'Solana'
-
-const configuredSolanaRpcUrl = import.meta.env.VITE_SOLANA_RPC_URL?.trim()
-
-export const walletCustomRpcUrls = configuredSolanaRpcUrl
-  ? { [solana.caipNetworkId]: [{ url: configuredSolanaRpcUrl }] }
-  : undefined
-
-export function isWalletNetwork(chainId) {
-  return String(chainId) === String(walletNetwork.id)
-}
-
-// Read-only transport for the existing Gift Vault contracts. These are unchanged.
 const configuredRpcUrl = import.meta.env.VITE_ROBINHOOD_RPC_URL?.trim()
 
 export const robinhoodChain = defineChain({
@@ -34,3 +17,4 @@ export const robinhoodChain = defineChain({
 })
 
 export const hasProductionRpc = Boolean(configuredRpcUrl)
+

@@ -1,4 +1,4 @@
-# Givexa Incident Response
+# Latentia Incident Response
 
 ## Objectives
 

@@ -1,4 +1,4 @@
-# Givexa Mainnet Smoke Test
+# Latentia Mainnet Smoke Test
 
 ## Safety boundary
 

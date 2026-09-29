@@ -5,19 +5,19 @@ import {
   ArrowRight, CalendarBlank, Check, CheckCircle, Copy, Gift, Info, LockKey,
   ShieldCheck, Wallet,
 } from '@phosphor-icons/react'
-import { isAddress, parseEventLogs, parseUnits, stringToHex, zeroHash } from 'viem'
+import { parseEventLogs, parseUnits, stringToHex, zeroHash } from 'viem'
 import { usePublicClient, useReadContract, useWriteContract } from 'wagmi'
 import { CONTRACTS, DEFAULT_EXPIRY_DAYS, ROBINHOOD_CHAIN_ID, SUPPORTED_ASSETS, TOKEN_DECIMALS } from '../../config/deployment.js'
 import { assetRegistryAbi, erc20Abi, feeControllerAbi, giftVaultAbi } from '../../web3/abis.js'
 import { getTransactionErrorMessage } from '../../web3/errors.js'
 import { formatTokenAmount } from '../../web3/format.js'
 import { buildClaimUrl, generateClaimCode, generateSecret } from '../../web3/giftLink.js'
-import { isWalletNetwork, WALLET_NAMESPACE, WALLET_NETWORK_NAME, walletNetwork } from '../../web3/network.js'
+import { robinhoodChain } from '../../web3/network.js'
 import { TransactionStatus } from '../../components/app/TransactionStatus.jsx'
 
 const EXPIRY_OPTIONS = [7, 14, 30, 90]
 const MAX_UINT128 = (1n << 128n) - 1n
-const PENDING_GIFT_KEY = 'givexa.pending-gift'
+const PENDING_GIFT_KEY = 'latentia.pending-gift'
 const PENDING_GIFT_TTL = 7 * 24 * 60 * 60 * 1000
 
 function loadPendingGift() {
@@ -112,12 +112,10 @@ function AssetPicker({ selectedAddress, onChange }) {
 export function CreateGiftFlow() {
   const reduceMotion = useReducedMotion()
   const { open } = useAppKit()
-  const { address, isConnected } = useAppKitAccount({ namespace: WALLET_NAMESPACE })
+  const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' })
   const { chainId, switchNetwork } = useAppKitNetwork()
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID })
   const { writeContractAsync } = useWriteContract()
-  // Token balances are only readable for an account the Gift Vault contracts understand.
-  const contractAccount = address && isAddress(address) ? address : undefined
 
   const [assetAddress, setAssetAddress] = useState(SUPPORTED_ASSETS[0].address)
   const [amount, setAmount] = useState('')
@@ -134,7 +132,7 @@ export function CreateGiftFlow() {
 
   const principal = useMemo(() => parsePrincipal(amount), [amount])
   const selectedAsset = SUPPORTED_ASSETS.find((asset) => asset.address === assetAddress)
-  const onCorrectNetwork = isWalletNetwork(chainId)
+  const onCorrectNetwork = Number(chainId) === ROBINHOOD_CHAIN_ID
 
   const { data: quotedFee = 0n, isLoading: feeLoading, error: feeError } = useReadContract({
     address: CONTRACTS.feeController,
@@ -167,17 +165,17 @@ export function CreateGiftFlow() {
     address: assetAddress,
     abi: erc20Abi,
     functionName: 'balanceOf',
-    args: contractAccount ? [contractAccount] : undefined,
+    args: address ? [address] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(contractAccount) },
+    query: { enabled: Boolean(address) },
   })
   const { data: allowance = 0n } = useReadContract({
     address: assetAddress,
     abi: erc20Abi,
     functionName: 'allowance',
-    args: contractAccount ? [contractAccount, CONTRACTS.giftVault] : undefined,
+    args: address ? [address, CONTRACTS.giftVault] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(contractAccount) },
+    query: { enabled: Boolean(address) },
   })
 
   const totalRequired = principal ? principal + quotedFee : 0n
@@ -210,8 +208,8 @@ export function CreateGiftFlow() {
   function validateForm() {
     if (!principal) return 'Enter a valid amount with no more than 18 decimal places.'
     if (feeLoading) return 'Wait for the live creation fee to finish loading.'
-    if (feeError || feeRateError || registryError || pauseError || balanceError) return 'Live contract state could not be verified. Check the network connection and try again.'
-    if (supported === false) return 'This asset is currently disabled in the Givexa registry.'
+    if (feeError || feeRateError || registryError || pauseError || balanceError) return 'Live contract state could not be verified. Check the Robinhood Chain RPC connection and try again.'
+    if (supported === false) return 'This asset is currently disabled in the Latentia registry.'
     if (creationPaused) return 'New gifts are temporarily paused. Existing gifts remain safe.'
     if (senderName.length > 60) return 'Sender name must be 60 characters or fewer.'
     if (message.length > 240) return 'Gift message must be 240 characters or fewer.'
@@ -243,7 +241,7 @@ export function CreateGiftFlow() {
       args: [CONTRACTS.giftVault, total],
     })
     const approvalHash = await writeContractAsync(request)
-    setTransaction({ status: 'pending', message: 'Token approval submitted. Waiting for onchain confirmation.', hash: approvalHash })
+    setTransaction({ status: 'pending', message: 'Token approval submitted. Waiting for Robinhood Chain confirmation.', hash: approvalHash })
     const receipt = await publicClient.waitForTransactionReceipt({ hash: approvalHash })
     if (receipt.status !== 'success') throw new Error('Token approval reverted.')
   }
@@ -252,11 +250,11 @@ export function CreateGiftFlow() {
     event.preventDefault()
     setFormError('')
     if (!isConnected) {
-      open({ view: 'Connect', namespace: WALLET_NAMESPACE })
+      open({ view: 'Connect', namespace: 'eip155' })
       return
     }
     if (!onCorrectNetwork) {
-      await switchNetwork(walletNetwork)
+      await switchNetwork(robinhoodChain)
       return
     }
     const validationError = validateForm()
@@ -266,7 +264,7 @@ export function CreateGiftFlow() {
     }
 
     try {
-      if (!publicClient) throw new Error('The network RPC is unavailable.')
+      if (!publicClient) throw new Error('Robinhood Chain RPC is unavailable.')
       const secret = generateSecret()
       const claimCode = protectedGift ? generateClaimCode() : ''
       const unlockAt = getUnlockTimestamp(mode, scheduledAt)
@@ -352,10 +350,10 @@ export function CreateGiftFlow() {
         <span className="gift-success__icon"><Gift size={38} weight="duotone" /></span>
         <p className="app-eyebrow">Gift #{createdGift.giftId} funded</p>
         <h1>Your piece of the market is ready to send.</h1>
-        <p>{createdGift.amount} {createdGift.symbol} is secured in the Givexa Gift Vault. The private link contains the claim secret, so share it only with the intended recipient.</p>
+        <p>{createdGift.amount} {createdGift.symbol} is secured in the Latentia Gift Vault. The private link contains the claim secret, so share it only with the intended recipient.</p>
         <div className="claim-link-box"><span>{createdGift.claimUrl}</span><button type="button" onClick={copyLink}>{copied ? <Check /> : <Copy />} {copied ? 'Copied' : 'Copy link'}</button></div>
         {createdGift.claimCode && <div className="claim-code-once"><LockKey size={24} /><div><small>Share separately. Shown once.</small><strong>{createdGift.claimCode}</strong></div></div>}
-        <TransactionStatus status="success" message="The funding transaction is confirmed onchain." hash={createdGift.hash} />
+        <TransactionStatus status="success" message="The funding transaction is confirmed on Robinhood Chain." hash={createdGift.hash} />
         <div className="gift-success__actions"><a className="app-primary-button" href={createdGift.claimUrl}>Preview gift</a><button className="app-secondary-button" type="button" onClick={() => { clearPendingGift(); window.location.reload() }}>Create another</button></div>
       </Motion.section>
     )
@@ -364,7 +362,7 @@ export function CreateGiftFlow() {
   return (
     <form className="create-gift-layout" onSubmit={handleCreate} noValidate>
       <div className="create-gift-main">
-        <div className="app-section-heading"><p className="app-eyebrow">Create a Gift Vault</p><h1>Give someone a piece of the market.</h1><p>Choose the asset and moment. Givexa handles the onchain funding and creates a private claim link.</p></div>
+        <div className="app-section-heading"><p className="app-eyebrow">Create a Gift Vault</p><h1>Give someone a piece of the market.</h1><p>Choose the asset and moment. Latentia handles the onchain funding and creates a private claim link.</p></div>
         <div className="app-card"><AssetPicker selectedAddress={assetAddress} onChange={setAssetAddress} /></div>
         <div className="app-card form-grid">
           <div className="app-field app-field--wide"><label htmlFor="gift-amount">Gift amount</label><div className="amount-input"><input id="gift-amount" value={amount} onChange={(event) => setAmount(event.target.value)} inputMode="decimal" autoComplete="off" placeholder="0.00" aria-describedby="amount-help" /><span>{selectedAsset.symbol}</span></div><small id="amount-help">Wallet balance: {isConnected ? `${formatTokenAmount(balance)} ${selectedAsset.symbol}` : 'Connect to view'}</small></div>
@@ -380,14 +378,14 @@ export function CreateGiftFlow() {
       </div>
 
       <aside className="gift-summary" aria-label="Gift funding summary">
-        <div className="gift-summary__asset"><img src={`/stocks/${selectedAsset.symbol}.webp`} alt="" width="44" height="44" /><div><small>Selected asset</small><strong>{selectedAsset.symbol}</strong><span>{selectedAsset.name}</span></div><ShieldCheck className="ml-auto text-givexa-500" size={23} weight="duotone" /></div>
+        <div className="gift-summary__asset"><img src={`/stocks/${selectedAsset.symbol}.webp`} alt="" width="44" height="44" /><div><small>Selected asset</small><strong>{selectedAsset.symbol}</strong><span>{selectedAsset.name}</span></div><ShieldCheck className="ml-auto text-latentia-500" size={23} weight="duotone" /></div>
         <div className="gift-summary__rows"><div><span>Gift principal</span><strong>{principal ? `${formatTokenAmount(principal)} ${selectedAsset.symbol}` : 'Not set'}</strong></div><div><span>Creation fee</span><strong>{feeError || feeRateError ? 'Unavailable' : feeLoading ? 'Loading…' : principal ? `${formatTokenAmount(quotedFee)} ${selectedAsset.symbol}` : formatFeeRate(feeBps)}</strong></div><div className="is-total"><span>Wallet total</span><strong>{principal ? `${formatTokenAmount(totalRequired)} ${selectedAsset.symbol}` : 'Not set'}</strong></div></div>
-        <div className="gift-summary__note"><Info size={18} /><p>The recipient receives the full gift principal. Givexa adds no claim fee.</p></div>
+        <div className="gift-summary__note"><Info size={18} /><p>The recipient receives the full gift principal. Latentia adds no claim fee.</p></div>
         {needsApproval && isConnected && <p className="approval-note"><Wallet size={17} /> One token approval is required before funding.</p>}
         {formError && <p className="form-error" role="alert">{formError}</p>}
         <TransactionStatus status={transaction.status} message={transaction.message} hash={transaction.hash} />
         <button className="app-primary-button app-primary-button--full" type="submit" disabled={busy || creationPaused || supported === false}>
-          {!isConnected ? 'Connect wallet' : !onCorrectNetwork ? `Switch to ${WALLET_NETWORK_NAME}` : busy ? 'Transaction in progress' : needsApproval ? 'Approve and create gift' : 'Create Asset Gift'}
+          {!isConnected ? 'Connect wallet' : !onCorrectNetwork ? 'Switch to Robinhood Chain' : busy ? 'Transaction in progress' : needsApproval ? 'Approve and create gift' : 'Create Asset Gift'}
           {!busy && <ArrowRight size={19} weight="bold" />}
         </button>
         <div className="gift-summary__trust"><Check size={15} /> Exact-match verified contracts <Check size={15} /> Sender-controlled recovery</div>

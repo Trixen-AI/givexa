@@ -1,7 +1,7 @@
 {
-  "name": "Givexa",
-  "short_name": "Givexa",
-  "description": "The gifting layer for tokenized markets on Solana.",
+  "name": "Latentia",
+  "short_name": "Latentia",
+  "description": "The gifting layer for tokenized markets on Robinhood Chain.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,10 +9,10 @@
   "theme_color": "#6847ff",
   "icons": [
     {
-      "src": "/brand/givexa-logo.png",
-      "sizes": "500x500",
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

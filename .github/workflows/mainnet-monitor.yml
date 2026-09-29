@@ -1,4 +1,4 @@
-name: Givexa mainnet monitor
+name: Latentia mainnet monitor
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: givexa-mainnet-monitor
+  group: latentia-mainnet-monitor
   cancel-in-progress: false
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
     timeout-minutes: 10
     env:
       ROBINHOOD_RPC_URL: ${{ secrets.ROBINHOOD_RPC_URL }}
-      GIVEXA_EXPECTED_FEE_BPS: '50'
-      GIVEXA_ALLOW_CREATION_PAUSED: 'false'
+      LATENTIA_EXPECTED_FEE_BPS: '50'
+      LATENTIA_ALLOW_CREATION_PAUSED: 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

@@ -1,12 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { SolanaAdapter } from '@reown/appkit-adapter-solana/react'
-import { createConfig, http, WagmiProvider } from 'wagmi'
-import { hasProductionRpc, robinhoodChain, walletCustomRpcUrls, walletNetwork } from './network.js'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { WagmiProvider } from 'wagmi'
+import { hasProductionRpc, robinhoodChain } from './network.js'
 
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID?.trim()
-const publicAppUrl = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://givexa.xyz').replace(/\/$/u, '')
+const publicAppUrl = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://latentiaapp.org').replace(/\/$/u, '')
 
 export const web3Configuration = Object.freeze({
   projectIdConfigured: Boolean(projectId),
@@ -21,25 +21,25 @@ const queryClient = new QueryClient({
   },
 })
 
-// Read-only client for the deployed Gift Vault contracts. No wallet connectors are attached.
-const contractReadConfig = createConfig({
-  chains: [robinhoodChain],
-  connectors: [],
-  transports: { [robinhoodChain.id]: http() },
-})
+let wagmiAdapter
 
 if (web3Configuration.ready) {
+  wagmiAdapter = new WagmiAdapter({
+    networks: [robinhoodChain],
+    projectId,
+    ssr: false,
+  })
+
   createAppKit({
-    adapters: [new SolanaAdapter()],
-    networks: [walletNetwork],
-    defaultNetwork: walletNetwork,
-    customRpcUrls: walletCustomRpcUrls,
+    adapters: [wagmiAdapter],
+    networks: [robinhoodChain],
+    defaultNetwork: robinhoodChain,
     projectId,
     metadata: {
-      name: 'Givexa',
-      description: 'Programmable asset gifts on Solana',
+      name: 'Latentia',
+      description: 'Programmable asset gifts on Robinhood Chain',
       url: publicAppUrl,
-      icons: [`${publicAppUrl}/brand/givexa-logo.png`],
+      icons: [`${publicAppUrl}/brand/icon-512.png`],
     },
     themeMode: 'light',
     themeVariables: {
@@ -57,7 +57,7 @@ if (web3Configuration.ready) {
 export function AppKitProvider({ children }) {
   if (!web3Configuration.ready) return children
   return (
-    <WagmiProvider config={contractReadConfig}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )

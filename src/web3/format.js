@@ -12,8 +12,7 @@ export function formatTokenAmount(value, maximumFractionDigits = 6) {
 }
 
 export function shortAddress(address) {
-  if (!address) return ''
-  return `${address.slice(0, address.startsWith('0x') ? 6 : 4)}…${address.slice(-4)}`
+  return address ? `${address.slice(0, 6)}…${address.slice(-4)}` : ''
 }
 
 export function formatDate(timestamp) {

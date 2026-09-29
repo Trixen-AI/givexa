@@ -85,7 +85,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   top: 57%;
   width: clamp(118px, 13vw, 154px);
   height: clamp(118px, 13vw, 154px);
-  object-fit: contain;
+  display: grid;
+  place-items: center;
   border: 1px solid rgba(255,255,255,.48);
   border-radius: 30px;
   background: rgba(255,255,255,.94);
@@ -94,6 +95,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   pointer-events: none;
   user-select: none;
 }
+.asset-globe__brand-mark { width: 56%; height: 56%; }
 .asset-globe__node {
   position: absolute;
   left: 0;

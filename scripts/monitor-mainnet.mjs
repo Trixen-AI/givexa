@@ -214,12 +214,12 @@ const stockTokenAbi = [
 ];
 
 function parseExpectedFeeBps(deployment) {
-  const configured = process.env.GIVEXA_EXPECTED_FEE_BPS;
+  const configured = process.env.LATENTIA_EXPECTED_FEE_BPS;
   if (configured === undefined || configured === "") {
     return BigInt(deployment.contracts.feeController.initialFeeBps);
   }
   if (!/^\d+$/.test(configured)) {
-    throw new Error("GIVEXA_EXPECTED_FEE_BPS must be a non-negative integer");
+    throw new Error("LATENTIA_EXPECTED_FEE_BPS must be a non-negative integer");
   }
   return BigInt(configured);
 }
@@ -262,7 +262,7 @@ async function run() {
   ]);
   const report = new MonitorReport();
   const expectedFeeBps = parseExpectedFeeBps(deployment);
-  const allowCreationPaused = process.env.GIVEXA_ALLOW_CREATION_PAUSED === "true";
+  const allowCreationPaused = process.env.LATENTIA_ALLOW_CREATION_PAUSED === "true";
 
   report.check("manifest.chain-id", deployment.network.chainId === EXPECTED_CHAIN_ID, {
     expected: EXPECTED_CHAIN_ID,
@@ -379,7 +379,7 @@ async function run() {
   report.check("fee-controller.expected-fee", BigInt(feeBps) === expectedFeeBps, {
     expected: expectedFeeBps,
     actual: feeBps,
-    detail: "Update the public GIVEXA_EXPECTED_FEE_BPS baseline after an authorized change.",
+    detail: "Update the public LATENTIA_EXPECTED_FEE_BPS baseline after an authorized change.",
   });
   report.check("fee-controller.treasury", sameAddress(treasury, treasuryAddress), {
     expected: treasuryAddress,
@@ -503,7 +503,7 @@ async function run() {
   }
 
   const output = {
-    monitor: "givexa-robinhood-mainnet",
+    monitor: "latentia-robinhood-mainnet",
     checkedAt: new Date().toISOString(),
     chainId,
     blockNumber,
@@ -514,7 +514,7 @@ async function run() {
   if (JSON_OUTPUT) {
     process.stdout.write(`${JSON.stringify(toJsonSafe(output), null, 2)}\n`);
   } else {
-    console.log(`Givexa mainnet monitor at block ${blockNumber}`);
+    console.log(`Latentia mainnet monitor at block ${blockNumber}`);
     for (const check of report.checks) {
       const label = check.status === "pass" ? "PASS" : check.status === "fail" ? "FAIL" : "INFO";
       console.log(`[${label}] ${check.id}`);
@@ -534,12 +534,12 @@ async function run() {
 
 run().catch((error) => {
   const safeFailure = {
-    monitor: "givexa-robinhood-mainnet",
+    monitor: "latentia-robinhood-mainnet",
     status: "fatal",
     error: error?.name ?? "Error",
     message:
       error?.message === "ROBINHOOD_RPC_URL is required" ||
-      error?.message?.startsWith("GIVEXA_EXPECTED_FEE_BPS")
+      error?.message?.startsWith("LATENTIA_EXPECTED_FEE_BPS")
         ? error.message
         : "The public RPC or an onchain read failed. The RPC URL was not logged.",
   };

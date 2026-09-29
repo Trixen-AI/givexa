@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        givexa: {
+        latentia: {
           50: '#f5f2ff',
           100: '#eee8ff',
           300: '#b6a5ff',
@@ -18,7 +18,7 @@ export default {
         mono: ['DM Mono', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        'givexa': '0 18px 50px rgba(94, 52, 236, 0.24)',
+        'latentia': '0 18px 50px rgba(94, 52, 236, 0.24)',
       },
     },
   },

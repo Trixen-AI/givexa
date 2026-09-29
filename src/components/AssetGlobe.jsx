@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
+import { LatentiaMark } from './BrandLogo.jsx'
 
 const assetSymbols = ['NVDA', 'AAPL', 'TSLA', 'MSFT', 'AMZN', 'GOOGL', 'META', 'SPY', 'QQQ', 'GLD']
 
@@ -37,7 +38,7 @@ export function AssetGlobe({ interactive = false, background = false }) {
   const reduceMotion = useReducedMotion()
   const label = interactive
     ? 'Interactive globe showing ten supported assets. Drag with a mouse to rotate.'
-    : 'Rotating globe representing the Givexa asset network.'
+    : 'Rotating globe representing the Latentia asset network.'
 
   const nodes = useMemo(() => assetSymbols.map((symbol, index) => ({ symbol, point: anchorPoints[index] })), [])
 
@@ -205,7 +206,7 @@ export function AssetGlobe({ interactive = false, background = false }) {
       aria-label={label}
     >
       <canvas ref={canvasRef} className={interactive ? 'asset-globe__canvas asset-globe__canvas--interactive' : 'asset-globe__canvas'} aria-hidden="true" />
-      <img className="asset-globe__brand" src="/brand/givexa-logo.png" alt="" aria-hidden="true" />
+      <span className="asset-globe__brand" aria-hidden="true"><LatentiaMark className="asset-globe__brand-mark" /></span>
       {nodes.map(({ symbol }, index) => (
         <span className="asset-globe__node" ref={(element) => { nodeRefs.current[index] = element }} key={symbol} aria-hidden="true">
           <img src={`/stocks/${symbol}.webp`} alt="" width="40" height="40" />

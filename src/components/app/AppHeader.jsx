@@ -28,7 +28,7 @@ function NavigationLinks({ mode, mobile = false }) {
 export function AppHeader({ mode }) {
   return (
     <>
-      <aside className="app-sidebar" aria-label="Givexa application sidebar">
+      <aside className="app-sidebar" aria-label="Latentia application sidebar">
         <div className="app-sidebar__brand"><BrandLogo /></div>
         <nav className="app-sidebar__nav" aria-label="Gift application">
           <NavigationLinks mode={mode} />
@@ -36,7 +36,7 @@ export function AppHeader({ mode }) {
         <div className="app-sidebar__footer">
           <div className="app-sidebar__resources">
             <a href="/docs"><BookOpenText size={18} /> <span>Docs</span></a>
-            <a href="https://x.com/Givexa_xyz" target="_blank" rel="noreferrer"><XLogo size={18} /> <span>Follow Givexa</span></a>
+            <a href="https://x.com/Latentia_" target="_blank" rel="noreferrer"><XLogo size={18} /> <span>Follow Latentia</span></a>
           </div>
           <WalletControl />
         </div>
