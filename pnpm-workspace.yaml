@@ -1,3 +1,5 @@
 allowBuilds:
   '@reown/appkit': true
   esbuild: true
+  # Optional native WebSocket accelerator pulled in by WalletConnect. A pure JS fallback is used.
+  bufferutil: false
