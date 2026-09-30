@@ -1,8 +1,8 @@
-# Latentia Security and Operations
+# TokLink Security and Operations
 
 ## Production boundary
 
-Latentia uses the deployed Robinhood Chain contracts as its source of truth. The web application reads public events and contract state directly. It does not operate an application backend, custody service, admin signer, or claim-secret database.
+TokLink uses the deployed Robinhood Chain contracts as its source of truth. The web application reads public events and contract state directly. It does not operate an application backend, custody service, admin signer, or claim-secret database.
 
 Never place a deployer key, Safe owner key, treasury key, WalletConnect relay secret, or unrestricted RPC credential in frontend variables. Frontend variables prefixed with `VITE_` are public by design.
 
@@ -31,8 +31,8 @@ corepack pnpm monitor:mainnet
 Optional baselines:
 
 ```powershell
-$env:LATENTIA_EXPECTED_FEE_BPS = "50"
-$env:LATENTIA_ALLOW_CREATION_PAUSED = "false"
+$env:TOKLINK_EXPECTED_FEE_BPS = "50"
+$env:TOKLINK_ALLOW_CREATION_PAUSED = "false"
 ```
 
 The monitor never requests a signer and never sends a transaction. It fails closed when the RPC is unavailable or an expected contract read cannot be completed. It checks:

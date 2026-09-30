@@ -95,7 +95,7 @@ async function readGovernanceState(publicClient) {
 function ExplorerLink({ address, children, className = '' }) {
   return (
     <a
-      className={`inline-flex min-h-11 items-center gap-2 rounded-xl text-sm font-semibold text-latentia-700 underline decoration-latentia-300 underline-offset-4 transition-colors hover:text-latentia-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latentia-500 focus-visible:ring-offset-2 ${className}`}
+      className={`inline-flex min-h-11 items-center gap-2 rounded-xl text-sm font-semibold text-toklink-700 underline decoration-toklink-300 underline-offset-4 transition-colors hover:text-toklink-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toklink-500 focus-visible:ring-offset-2 ${className}`}
       href={`${BLOCK_EXPLORER_URL}/address/${address}`}
       target="_blank"
       rel="noreferrer"
@@ -108,7 +108,7 @@ function ExplorerLink({ address, children, className = '' }) {
 
 function StatusPill({ healthy, children }) {
   return (
-    <span className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${healthy ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'}`}>
+    <span className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${healthy ? 'bg-[#d9efed] text-[#04675b]' : 'bg-[#ffe9cf] text-[#774205]'}`}>
       {healthy ? <CheckCircle size={15} weight="fill" aria-hidden="true" /> : <WarningCircle size={15} weight="fill" aria-hidden="true" />}
       {children}
     </span>
@@ -117,27 +117,27 @@ function StatusPill({ healthy, children }) {
 
 function PostureCard({ icon: Icon, title, value, detail, healthy }) {
   return (
-    <article className="rounded-3xl border border-violet-100 bg-white p-5 shadow-[0_12px_40px_rgba(53,30,110,0.06)] sm:p-6">
+    <article className="rounded-3xl border border-[#d0ddf7] bg-white p-5 shadow-[0_12px_40px_rgba(0,49,133,0.06)] sm:p-6">
       <div className="flex items-start justify-between gap-4">
-        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-latentia-50 text-latentia-700">
+        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-toklink-50 text-toklink-700">
           <Icon size={23} weight="duotone" aria-hidden="true" />
         </span>
         <StatusPill healthy={healthy}>{healthy ? 'Verified' : 'Review'}</StatusPill>
       </div>
-      <h2 className="mt-6 text-sm font-semibold text-slate-600">{title}</h2>
-      <p className="mt-1 text-2xl font-semibold tracking-[-0.025em] text-slate-950">{value}</p>
-      <p className="mt-3 text-sm leading-6 text-slate-600">{detail}</p>
+      <h2 className="mt-6 text-sm font-semibold text-[#5b677e]">{title}</h2>
+      <p className="mt-1 text-2xl font-semibold tracking-[-0.025em] text-[#15181a]">{value}</p>
+      <p className="mt-3 text-sm leading-6 text-[#5b677e]">{detail}</p>
     </article>
   )
 }
 
 function ContractCard({ name, role, address, state, healthy = true }) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-5">
+    <article className="rounded-2xl border border-[#d0ddf7] bg-white p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-base font-semibold text-slate-950">{name}</h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{role}</p>
+          <h3 className="text-base font-semibold text-[#15181a]">{name}</h3>
+          <p className="mt-1 text-sm leading-6 text-[#5b677e]">{role}</p>
         </div>
         <StatusPill healthy={healthy}>{state}</StatusPill>
       </div>
@@ -150,11 +150,11 @@ function LoadingState() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" role="status" aria-label="Loading governance status">
       {[0, 1, 2, 3].map((item) => (
-        <div className="h-56 animate-pulse rounded-3xl border border-violet-100 bg-white p-6" key={item}>
-          <div className="size-11 rounded-2xl bg-violet-100" />
-          <div className="mt-7 h-4 w-24 rounded bg-slate-100" />
-          <div className="mt-3 h-8 w-36 rounded bg-slate-100" />
-          <div className="mt-5 h-4 w-full rounded bg-slate-100" />
+        <div className="h-56 animate-pulse rounded-3xl border border-[#d0ddf7] bg-white p-6" key={item}>
+          <div className="size-11 rounded-2xl bg-[#dee8fc]" />
+          <div className="mt-7 h-4 w-24 rounded bg-[#edf3fe]" />
+          <div className="mt-3 h-8 w-36 rounded bg-[#edf3fe]" />
+          <div className="mt-5 h-4 w-full rounded bg-[#edf3fe]" />
         </div>
       ))}
       <span className="sr-only">Reading governance contracts from Robinhood Chain.</span>
@@ -202,23 +202,23 @@ export function GovernancePage() {
 
   return (
     <section className="mx-auto w-full max-w-[1184px]" aria-labelledby="governance-title">
-      <div className="overflow-hidden rounded-[30px] border border-violet-100 bg-[radial-gradient(circle_at_80%_0%,rgba(183,164,255,0.32),transparent_34%),linear-gradient(135deg,#fbfaff_0%,#ffffff_60%)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14">
+      <div className="overflow-hidden rounded-[30px] border border-[#d0ddf7] bg-[radial-gradient(circle_at_80%_0%,rgba(134,177,255,0.32),transparent_34%),linear-gradient(135deg,#f4f7ff_0%,#ffffff_60%)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
-            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-latentia-600">Onchain governance</p>
-            <h1 id="governance-title" className="mt-4 max-w-2xl text-4xl font-medium tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-toklink-600">Onchain governance</p>
+            <h1 id="governance-title" className="mt-4 max-w-2xl text-4xl font-medium tracking-[-0.045em] text-[#15181a] sm:text-5xl lg:text-6xl">
               Protocol controls, visible to everyone.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-[#5b677e] sm:text-lg">
               This page reads the deployed Safe, Timelock, fee settings, ownership, and asset allowlist directly from Robinhood Chain. It cannot submit governance actions.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-violet-200 bg-white px-4 text-sm font-semibold text-slate-800">
-              <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Chain ID {ROBINHOOD_CHAIN_ID}
+            <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d0ddf7] bg-white px-4 text-sm font-semibold text-[#353a46]">
+              <span className="size-2 rounded-full bg-[#3b978c]" aria-hidden="true" /> Chain ID {ROBINHOOD_CHAIN_ID}
             </span>
             <button
-              className="min-h-11 rounded-full bg-slate-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-latentia-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latentia-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+              className="min-h-11 rounded-full bg-toklink-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-toklink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toklink-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
               type="button"
               onClick={() => governanceQuery.refetch()}
               disabled={governanceQuery.isFetching}
@@ -232,7 +232,7 @@ export function GovernancePage() {
       <div className="mt-10" aria-live="polite">
         {governanceQuery.isPending && <LoadingState />}
         {governanceQuery.isError && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900" role="alert">
+          <div className="rounded-2xl border border-[#ffa9b9] bg-[#ffdadf] p-5 text-[#ab103f]" role="alert">
             <div className="flex items-start gap-3">
               <WarningCircle className="mt-0.5 shrink-0" size={22} weight="fill" aria-hidden="true" />
               <div><h2 className="font-semibold">Governance status is unavailable</h2><p className="mt-1 text-sm leading-6">The Robinhood Chain provider did not return the contract state. Check the RPC connection and retry.</p></div>
@@ -242,7 +242,7 @@ export function GovernancePage() {
         {governanceQuery.isSuccess && (
           <>
             {failedReads.length > 0 && (
-              <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950" role="status">
+              <div className="mb-5 rounded-2xl border border-[#fed6a7] bg-[#ffe9cf] p-4 text-sm leading-6 text-[#774205]" role="status">
                 <strong>Partial onchain response.</strong> {failedReads.length} of {GOVERNANCE_READS.length + SUPPORTED_ASSETS.length} checks could not be read. Unavailable values are marked for review.
               </div>
             )}
@@ -284,26 +284,26 @@ export function GovernancePage() {
         <>
           <section className="mt-14" aria-labelledby="governance-controls-title">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-              <div><p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-latentia-600">Control plane</p><h2 id="governance-controls-title" className="mt-2 text-3xl font-medium tracking-[-0.035em] text-slate-950">Verified contract relationships</h2></div>
-              {refreshedAt && <p className="text-xs text-slate-500">Last refreshed at {refreshedAt}</p>}
+              <div><p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-toklink-600">Control plane</p><h2 id="governance-controls-title" className="mt-2 text-3xl font-medium tracking-[-0.035em] text-[#15181a]">Verified contract relationships</h2></div>
+              {refreshedAt && <p className="text-xs text-[#727f99]">Last refreshed at {refreshedAt}</p>}
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <ContractCard name="Governance Safe" role="Proposes timelocked changes and acts as emergency guardian." address={CONTRACTS.treasurySafe} state={posture.safeHealthy ? '2-of-3' : 'Review'} healthy={posture.safeHealthy} />
-              <ContractCard name="Timelock" role="Owns every configurable Latentia protocol contract." address={CONTRACTS.timelock} state={posture.ownershipHealthy ? 'Owner' : 'Review'} healthy={posture.ownershipHealthy} />
+              <ContractCard name="Timelock" role="Owns every configurable TokLink protocol contract." address={CONTRACTS.timelock} state={posture.ownershipHealthy ? 'Owner' : 'Review'} healthy={posture.ownershipHealthy} />
               <ContractCard name="Gift Vault" role="Escrows principal and enforces the gift lifecycle." address={CONTRACTS.giftVault} state={posture.routesHealthy ? 'Connected' : 'Review'} healthy={posture.routesHealthy} />
               <ContractCard name="Asset Registry" role={`${posture.supportedAssets} supported assets read directly onchain.`} address={CONTRACTS.assetRegistry} state={sameAddress(values.registryOwner, CONTRACTS.timelock) ? 'Timelocked' : 'Review'} healthy={sameAddress(values.registryOwner, CONTRACTS.timelock)} />
               <ContractCard name="Fee Controller" role={`Current creation fee ${formatFee(values.feeBps)} with a ${formatFee(values.feeCapBps)} contract cap.`} address={CONTRACTS.feeController} state={posture.feeHealthy ? 'Within cap' : 'Review'} healthy={posture.feeHealthy} />
             </div>
           </section>
 
-          <section className="mt-14 rounded-[28px] bg-slate-950 p-6 text-white sm:p-9" aria-labelledby="governance-boundaries-title">
+          <section className="mt-14 rounded-[28px] bg-[#003185] p-6 text-white sm:p-9" aria-labelledby="governance-boundaries-title">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-              <div><span className="grid size-12 place-items-center rounded-2xl bg-white/10 text-violet-200"><LockKey size={24} weight="duotone" aria-hidden="true" /></span><h2 id="governance-boundaries-title" className="mt-5 text-3xl font-medium tracking-[-0.035em]">Read-only by design.</h2><p className="mt-3 max-w-md text-sm leading-6 text-slate-300">Wallets connected to the user application cannot change fees, ownership, the allowlist, treasury, or guardian from this page.</p></div>
+              <div><span className="grid size-12 place-items-center rounded-2xl bg-white/10 text-[#86b1ff]"><LockKey size={24} weight="duotone" aria-hidden="true" /></span><h2 id="governance-boundaries-title" className="mt-5 text-3xl font-medium tracking-[-0.035em]">Read-only by design.</h2><p className="mt-3 max-w-md text-sm leading-6 text-[#d0ddf7]">Wallets connected to the user application cannot change fees, ownership, the allowlist, treasury, or guardian from this page.</p></div>
               <dl className="grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2">
-                <div className="bg-slate-900 p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Guardian</dt><dd className="mt-3 font-mono text-sm text-white">{shortAddress(values.vaultGuardian)}</dd></div>
-                <div className="bg-slate-900 p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Treasury</dt><dd className="mt-3 font-mono text-sm text-white">{shortAddress(values.treasury)}</dd></div>
-                <div className="bg-slate-900 p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Protocol ownership</dt><dd className="mt-3 text-sm text-white">{posture.ownershipHealthy ? 'Timelock verified' : 'Review required'}</dd></div>
-                <div className="bg-slate-900 p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Vault dependencies</dt><dd className="mt-3 text-sm text-white">{posture.routesHealthy ? 'Registry and fees verified' : 'Review required'}</dd></div>
+                <div className="bg-[#0a3d98] p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b1c0dd]">Guardian</dt><dd className="mt-3 font-mono text-sm text-white">{shortAddress(values.vaultGuardian)}</dd></div>
+                <div className="bg-[#0a3d98] p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b1c0dd]">Treasury</dt><dd className="mt-3 font-mono text-sm text-white">{shortAddress(values.treasury)}</dd></div>
+                <div className="bg-[#0a3d98] p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b1c0dd]">Protocol ownership</dt><dd className="mt-3 text-sm text-white">{posture.ownershipHealthy ? 'Timelock verified' : 'Review required'}</dd></div>
+                <div className="bg-[#0a3d98] p-5"><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b1c0dd]">Vault dependencies</dt><dd className="mt-3 text-sm text-white">{posture.routesHealthy ? 'Registry and fees verified' : 'Review required'}</dd></div>
               </dl>
             </div>
           </section>

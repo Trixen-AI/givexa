@@ -25,7 +25,7 @@ test('round trips private claim metadata through the URL fragment', () => {
     senderName: 'Arman',
     message: 'For your next milestone',
     protectedGift: true,
-    baseUrl: 'https://latentiaapp.org/',
+    baseUrl: 'https://toklink.org/',
   }))
   assert.equal(url.pathname, '/claim/42')
   assert.equal(url.search, '')

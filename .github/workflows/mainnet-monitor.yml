@@ -1,4 +1,4 @@
-name: Latentia mainnet monitor
+name: TokLink mainnet monitor
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: latentia-mainnet-monitor
+  group: toklink-mainnet-monitor
   cancel-in-progress: false
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
     timeout-minutes: 10
     env:
       ROBINHOOD_RPC_URL: ${{ secrets.ROBINHOOD_RPC_URL }}
-      LATENTIA_EXPECTED_FEE_BPS: '50'
-      LATENTIA_ALLOW_CREATION_PAUSED: 'false'
+      TOKLINK_EXPECTED_FEE_BPS: '50'
+      TOKLINK_ALLOW_CREATION_PAUSED: 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

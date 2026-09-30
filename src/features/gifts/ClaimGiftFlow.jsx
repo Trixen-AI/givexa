@@ -45,12 +45,12 @@ function GiftLinkEntry() {
       const match = url.pathname.match(/^\/claim\/(\d+)\/?$/u)
       const payload = readClaimPayload(url.hash)
       if (!match || !payload || payload.giftId !== BigInt(match[1])) {
-        setError('Paste the complete private Latentia claim link shared by the sender.')
+        setError('Paste the complete private TokLink claim link shared by the sender.')
         return
       }
       window.location.assign(`${window.location.origin}/claim/${payload.giftId}${url.hash}`)
     } catch {
-      setError('Paste a valid Latentia claim link, including its private #gvx fragment.')
+      setError('Paste a valid TokLink claim link, including its private #gvx fragment.')
     }
   }
 
@@ -58,12 +58,12 @@ function GiftLinkEntry() {
     <section className="claim-entry app-card">
       <span className="claim-entry__icon"><LinkSimple size={34} weight="duotone" /></span>
       <p className="app-eyebrow">Open an existing gift</p>
-      <h1>Reveal your Latentia gift.</h1>
-      <p>Paste the complete private link you received. Latentia reads the bearer secret only in this browser and never sends it in the page request.</p>
+      <h1>Reveal your TokLink gift.</h1>
+      <p>Paste the complete private link you received. TokLink reads the bearer secret only in this browser and never sends it in the page request.</p>
       <form onSubmit={openGift} noValidate>
         <label htmlFor="claim-link">Private gift link</label>
         <div className="claim-entry__input">
-          <input id="claim-link" type="url" value={link} onChange={(event) => setLink(event.target.value)} placeholder="https://latentiaapp.org/claim/…#gvx=…" autoComplete="off" spellCheck="false" aria-invalid={Boolean(error)} aria-describedby={error ? 'claim-link-error' : undefined} />
+          <input id="claim-link" type="url" value={link} onChange={(event) => setLink(event.target.value)} placeholder="https://toklink.org/claim/…#gvx=…" autoComplete="off" spellCheck="false" aria-invalid={Boolean(error)} aria-describedby={error ? 'claim-link-error' : undefined} />
           <button className="app-primary-button" type="submit">Open gift <ArrowRight size={18} weight="bold" /></button>
         </div>
         {error && <p className="form-error" id="claim-link-error" role="alert">{error}</p>}
@@ -81,7 +81,7 @@ function GiftState({ status, title: suppliedTitle, copy: suppliedCopy }) {
     <section className="claim-state app-card">
       <span className="claim-state__icon"><WarningCircle size={38} weight="duotone" /></span>
       <p className="app-eyebrow">Gift status: {status}</p><h1>{title}</h1><p>{copy}</p>
-      <a className="app-secondary-button" href="/">Return to Latentia</a>
+      <a className="app-secondary-button" href="/">Return to TokLink</a>
     </section>
   )
 }
@@ -115,7 +115,7 @@ export function ClaimGiftFlow({ routeGiftId }) {
 
   if (!validRoute) return <GiftLinkEntry />
   if (giftLoading || statusLoading) return <div className="claim-loading app-card" role="status"><span className="app-spinner" /><strong>Reading Gift Vault #{routeGiftId}</strong><p>Checking the verified contract on Robinhood Chain.</p></div>
-  if (statusError) return <GiftState status="Unavailable" title="Robinhood Chain is unavailable" copy="Latentia could not verify the current Gift Vault status. Check the RPC connection and try again before using the private link." />
+  if (statusError) return <GiftState status="Unavailable" title="Robinhood Chain is unavailable" copy="TokLink could not verify the current Gift Vault status. Check the RPC connection and try again before using the private link." />
 
   const gift = normalizeGift(giftResult)
   const status = DISPLAY_STATUS[Number(statusResult ?? 0)] || 'Nonexistent'
@@ -167,8 +167,8 @@ export function ClaimGiftFlow({ routeGiftId }) {
     return (
       <Motion.section className="gift-success" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
         <span className="gift-success__icon"><CheckCircle size={42} weight="duotone" /></span><p className="app-eyebrow">Gift #{giftId} claimed</p>
-        <h1>The gift is now in your wallet.</h1><p>{formatTokenAmount(gift.principal)} {selectedAsset.symbol} was transferred directly from the Latentia Gift Vault to your connected address.</p>
-        <TransactionStatus {...transaction} /><div className="gift-success__actions"><a className="app-primary-button" href="/">Explore Latentia</a><a className="app-secondary-button" href="/app">Create a gift</a></div>
+        <h1>The gift is now in your wallet.</h1><p>{formatTokenAmount(gift.principal)} {selectedAsset.symbol} was transferred directly from the TokLink Gift Vault to your connected address.</p>
+        <TransactionStatus {...transaction} /><div className="gift-success__actions"><a className="app-primary-button" href="/">Explore TokLink</a><a className="app-secondary-button" href="/app">Create a gift</a></div>
       </Motion.section>
     )
   }
@@ -178,7 +178,7 @@ export function ClaimGiftFlow({ routeGiftId }) {
       <section className="claim-reveal">
         <div className="claim-reveal__halo" aria-hidden="true" />
         <Motion.div className="claim-reveal__asset" initial={reduceMotion ? false : { opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}><img src={`/stocks/${selectedAsset.symbol}.webp`} alt={`${selectedAsset.name} logo`} width="92" height="92" /></Motion.div>
-        <p className="app-eyebrow">{payload.senderName ? `A gift from ${payload.senderName}` : 'A Latentia gift for you'}</p><h1>{formatTokenAmount(gift.principal)} <span>{selectedAsset.symbol}</span></h1>
+        <p className="app-eyebrow">{payload.senderName ? `A gift from ${payload.senderName}` : 'A TokLink gift for you'}</p><h1>{formatTokenAmount(gift.principal)} <span>{selectedAsset.symbol}</span></h1>
         <p className="claim-reveal__asset-name">{selectedAsset.name} Stock Token</p>{payload.message && <blockquote>“{payload.message}”</blockquote>}
         <div className="claim-reveal__badges"><span><ShieldCheck size={17} /> Funded onchain</span>{protectedGift && <span><LockKey size={17} /> Claim Code protected</span>}</div>
         <div className="claim-reveal__id"><span>Gift Vault #{giftId}</span><button type="button" onClick={copyGiftId} aria-label="Copy gift ID">{copied ? <Check /> : <Copy />}</button></div>

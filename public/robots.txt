@@ -4,4 +4,4 @@ Disallow: /claim
 Disallow: /gift
 Disallow: /dashboard
 
-Sitemap: https://latentiaapp.org/sitemap.xml
+Sitemap: https://toklink.org/sitemap.xml

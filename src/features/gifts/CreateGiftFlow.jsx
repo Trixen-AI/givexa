@@ -17,7 +17,7 @@ import { TransactionStatus } from '../../components/app/TransactionStatus.jsx'
 
 const EXPIRY_OPTIONS = [7, 14, 30, 90]
 const MAX_UINT128 = (1n << 128n) - 1n
-const PENDING_GIFT_KEY = 'latentia.pending-gift'
+const PENDING_GIFT_KEY = 'toklink.pending-gift'
 const PENDING_GIFT_TTL = 7 * 24 * 60 * 60 * 1000
 
 function loadPendingGift() {
@@ -209,7 +209,7 @@ export function CreateGiftFlow() {
     if (!principal) return 'Enter a valid amount with no more than 18 decimal places.'
     if (feeLoading) return 'Wait for the live creation fee to finish loading.'
     if (feeError || feeRateError || registryError || pauseError || balanceError) return 'Live contract state could not be verified. Check the Robinhood Chain RPC connection and try again.'
-    if (supported === false) return 'This asset is currently disabled in the Latentia registry.'
+    if (supported === false) return 'This asset is currently disabled in the TokLink registry.'
     if (creationPaused) return 'New gifts are temporarily paused. Existing gifts remain safe.'
     if (senderName.length > 60) return 'Sender name must be 60 characters or fewer.'
     if (message.length > 240) return 'Gift message must be 240 characters or fewer.'
@@ -350,7 +350,7 @@ export function CreateGiftFlow() {
         <span className="gift-success__icon"><Gift size={38} weight="duotone" /></span>
         <p className="app-eyebrow">Gift #{createdGift.giftId} funded</p>
         <h1>Your piece of the market is ready to send.</h1>
-        <p>{createdGift.amount} {createdGift.symbol} is secured in the Latentia Gift Vault. The private link contains the claim secret, so share it only with the intended recipient.</p>
+        <p>{createdGift.amount} {createdGift.symbol} is secured in the TokLink Gift Vault. The private link contains the claim secret, so share it only with the intended recipient.</p>
         <div className="claim-link-box"><span>{createdGift.claimUrl}</span><button type="button" onClick={copyLink}>{copied ? <Check /> : <Copy />} {copied ? 'Copied' : 'Copy link'}</button></div>
         {createdGift.claimCode && <div className="claim-code-once"><LockKey size={24} /><div><small>Share separately. Shown once.</small><strong>{createdGift.claimCode}</strong></div></div>}
         <TransactionStatus status="success" message="The funding transaction is confirmed on Robinhood Chain." hash={createdGift.hash} />
@@ -362,7 +362,7 @@ export function CreateGiftFlow() {
   return (
     <form className="create-gift-layout" onSubmit={handleCreate} noValidate>
       <div className="create-gift-main">
-        <div className="app-section-heading"><p className="app-eyebrow">Create a Gift Vault</p><h1>Give someone a piece of the market.</h1><p>Choose the asset and moment. Latentia handles the onchain funding and creates a private claim link.</p></div>
+        <div className="app-section-heading"><p className="app-eyebrow">Create a Gift Vault</p><h1>Give someone a piece of the market.</h1><p>Choose the asset and moment. TokLink handles the onchain funding and creates a private claim link.</p></div>
         <div className="app-card"><AssetPicker selectedAddress={assetAddress} onChange={setAssetAddress} /></div>
         <div className="app-card form-grid">
           <div className="app-field app-field--wide"><label htmlFor="gift-amount">Gift amount</label><div className="amount-input"><input id="gift-amount" value={amount} onChange={(event) => setAmount(event.target.value)} inputMode="decimal" autoComplete="off" placeholder="0.00" aria-describedby="amount-help" /><span>{selectedAsset.symbol}</span></div><small id="amount-help">Wallet balance: {isConnected ? `${formatTokenAmount(balance)} ${selectedAsset.symbol}` : 'Connect to view'}</small></div>
@@ -378,9 +378,9 @@ export function CreateGiftFlow() {
       </div>
 
       <aside className="gift-summary" aria-label="Gift funding summary">
-        <div className="gift-summary__asset"><img src={`/stocks/${selectedAsset.symbol}.webp`} alt="" width="44" height="44" /><div><small>Selected asset</small><strong>{selectedAsset.symbol}</strong><span>{selectedAsset.name}</span></div><ShieldCheck className="ml-auto text-latentia-500" size={23} weight="duotone" /></div>
+        <div className="gift-summary__asset"><img src={`/stocks/${selectedAsset.symbol}.webp`} alt="" width="44" height="44" /><div><small>Selected asset</small><strong>{selectedAsset.symbol}</strong><span>{selectedAsset.name}</span></div><ShieldCheck className="ml-auto text-toklink-600" size={23} weight="duotone" /></div>
         <div className="gift-summary__rows"><div><span>Gift principal</span><strong>{principal ? `${formatTokenAmount(principal)} ${selectedAsset.symbol}` : 'Not set'}</strong></div><div><span>Creation fee</span><strong>{feeError || feeRateError ? 'Unavailable' : feeLoading ? 'Loading…' : principal ? `${formatTokenAmount(quotedFee)} ${selectedAsset.symbol}` : formatFeeRate(feeBps)}</strong></div><div className="is-total"><span>Wallet total</span><strong>{principal ? `${formatTokenAmount(totalRequired)} ${selectedAsset.symbol}` : 'Not set'}</strong></div></div>
-        <div className="gift-summary__note"><Info size={18} /><p>The recipient receives the full gift principal. Latentia adds no claim fee.</p></div>
+        <div className="gift-summary__note"><Info size={18} /><p>The recipient receives the full gift principal. TokLink adds no claim fee.</p></div>
         {needsApproval && isConnected && <p className="approval-note"><Wallet size={17} /> One token approval is required before funding.</p>}
         {formError && <p className="form-error" role="alert">{formError}</p>}
         <TransactionStatus status={transaction.status} message={transaction.message} hash={transaction.hash} />

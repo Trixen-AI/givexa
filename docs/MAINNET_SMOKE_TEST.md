@@ -1,4 +1,4 @@
-# Latentia Mainnet Smoke Test
+# TokLink Mainnet Smoke Test
 
 ## Safety boundary
 

@@ -6,7 +6,7 @@ import { WagmiProvider } from 'wagmi'
 import { hasProductionRpc, robinhoodChain } from './network.js'
 
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID?.trim()
-const publicAppUrl = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://latentiaapp.org').replace(/\/$/u, '')
+const publicAppUrl = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://toklink.org').replace(/\/$/u, '')
 
 export const web3Configuration = Object.freeze({
   projectIdConfigured: Boolean(projectId),
@@ -36,7 +36,7 @@ if (web3Configuration.ready) {
     defaultNetwork: robinhoodChain,
     projectId,
     metadata: {
-      name: 'Latentia',
+      name: 'TokLink',
       description: 'Programmable asset gifts on Robinhood Chain',
       url: publicAppUrl,
       icons: [`${publicAppUrl}/brand/icon-512.png`],
@@ -44,8 +44,8 @@ if (web3Configuration.ready) {
     themeMode: 'light',
     themeVariables: {
       '--apkt-font-family': 'Inter, ui-sans-serif, system-ui, sans-serif',
-      '--apkt-accent': '#6d45ff',
-      '--apkt-color-mix': '#6d45ff',
+      '--apkt-accent': '#2b76ff',
+      '--apkt-color-mix': '#2b76ff',
       '--apkt-color-mix-strength': 18,
       '--apkt-border-radius-master': '10px',
       '--apkt-z-index': 100,

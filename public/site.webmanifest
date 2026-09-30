@@ -1,12 +1,12 @@
 {
-  "name": "Latentia",
-  "short_name": "Latentia",
+  "name": "TokLink",
+  "short_name": "TokLink",
   "description": "The gifting layer for tokenized markets on Robinhood Chain.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#6847ff",
+  "theme_color": "#3c80ff",
   "icons": [
     {
       "src": "/brand/icon-512.png",

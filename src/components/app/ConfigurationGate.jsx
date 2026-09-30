@@ -21,7 +21,7 @@ export function ConfigurationGate() {
           <span>Never place a wallet private key or unrestricted provider credential in a Vite environment variable.</span>
         </div>
         <div className="configuration-card__missing">Missing: {missing.join(', ')}</div>
-        <a className="app-primary-button" href="/">Return to Latentia</a>
+        <a className="app-primary-button" href="/">Return to TokLink</a>
       </div>
     </main>
   )

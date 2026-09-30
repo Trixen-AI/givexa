@@ -34,7 +34,7 @@ export function GiftApplication() {
         {route.mode === 'dashboard' && <DashboardFlow />}
         {route.mode === 'governance' && <GovernancePage />}
       </main>
-      <footer className="gift-app__footer"><span>Latentia on Robinhood Chain</span><span>Verified Gift Vault · Recipient pays no Latentia claim fee · <a href="https://x.com/Latentia_" target="_blank" rel="noreferrer">Follow on X</a></span></footer>
+      <footer className="gift-app__footer"><span>TokLink on Robinhood Chain</span><span>Verified Gift Vault · Recipient pays no TokLink claim fee · <a href="https://x.com/TokLink_" target="_blank" rel="noreferrer">Follow on X</a></span></footer>
     </div>
   )
 }

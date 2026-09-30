@@ -4,13 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        latentia: {
-          50: '#f5f2ff',
-          100: '#eee8ff',
-          300: '#b6a5ff',
-          500: '#7148ff',
-          600: '#6137f4',
-          700: '#4f28d3',
+        toklink: {
+          50: '#edf3fe',
+          100: '#dee8fc',
+          300: '#86b1ff',
+          500: '#3c80ff',
+          600: '#2b76ff',
+          700: '#003185',
         },
       },
       fontFamily: {
@@ -18,7 +18,7 @@ export default {
         mono: ['DM Mono', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        'latentia': '0 18px 50px rgba(94, 52, 236, 0.24)',
+        'toklink': '0 18px 50px rgba(0, 49, 133, 0.18)',
       },
     },
   },

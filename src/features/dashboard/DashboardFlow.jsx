@@ -91,7 +91,7 @@ function ConnectDashboard() {
     <section className="dashboard-connect app-card">
       <span><Wallet size={38} weight="duotone" /></span><p className="app-eyebrow">Private wallet view</p>
       <h1>Connect to read your gift history.</h1>
-      <p>Latentia queries public Robinhood Chain events for the connected address. No backend profile or custody account is created.</p>
+      <p>TokLink queries public Robinhood Chain events for the connected address. No backend profile or custody account is created.</p>
       <button className="app-primary-button" type="button" onClick={() => open({ view: 'Connect', namespace: 'eip155' })}>Connect wallet <ArrowRight size={18} weight="bold" /></button>
     </section>
   )
@@ -139,7 +139,7 @@ export function DashboardFlow() {
   return (
     <div className="dashboard-page">
       <section className="dashboard-heading">
-        <div><p className="app-eyebrow">Your onchain activity</p><h1>Gift dashboard</h1><p>Track sent and received Gift Vaults without a Latentia backend. Events come from Blockscout and current state is verified from the Gift Vault contract.</p></div>
+        <div><p className="app-eyebrow">Your onchain activity</p><h1>Gift dashboard</h1><p>Track sent and received Gift Vaults without a TokLink backend. Events come from Blockscout and current state is verified from the Gift Vault contract.</p></div>
         <div className="dashboard-heading__actions"><button className="app-secondary-button" type="button" onClick={() => historyQuery.refetch()} disabled={historyQuery.isFetching}><ArrowClockwise className={historyQuery.isFetching ? 'animate-spin' : ''} size={17} /> {historyQuery.isFetching ? 'Refreshing' : 'Refresh'}</button><a className="app-primary-button" href="/app">Create gift <ArrowRight size={17} weight="bold" /></a></div>
       </section>
 
@@ -174,7 +174,7 @@ export function DashboardFlow() {
           </section>
 
           <section className="dashboard-explainer">
-            <CalendarBlank size={20} weight="duotone" /><div><strong>Verified event history</strong><p>Latentia reads public lifecycle events from Blockscout, waits for two confirmations, removes duplicate logs, and refreshes every Gift Vault state directly from the contract.</p></div>
+            <CalendarBlank size={20} weight="duotone" /><div><strong>Verified event history</strong><p>TokLink reads public lifecycle events from Blockscout, waits for two confirmations, removes duplicate logs, and refreshes every Gift Vault state directly from the contract.</p></div>
           </section>
         </>
       )}

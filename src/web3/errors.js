@@ -1,6 +1,6 @@
 const ERROR_MESSAGES = {
   CreationPaused: 'Gift creation is temporarily paused. Existing gifts can still be claimed or recovered.',
-  UnsupportedAsset: 'This asset is not currently supported by the Latentia registry.',
+  UnsupportedAsset: 'This asset is not currently supported by the TokLink registry.',
   ZeroPrincipal: 'Enter a gift amount greater than zero.',
   ScheduleTooSoon: 'Scheduled gifts must unlock at least 10 minutes from now.',
   ScheduleTooFar: 'Scheduled gifts cannot unlock more than 365 days from now.',
